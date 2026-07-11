@@ -1,0 +1,42 @@
+{
+  "lessonId": "02-memory-variables",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-memory",
+      "question": "¿Qué directiva define una variable de 16 bits (2 bytes)?",
+      "options": ["DB", "DW", "DD", "DQ"],
+      "correctIndex": 1,
+      "explanation": "DW (Define Word) asigna 16 bits (2 bytes). DB son 8 bits, DD son 32 bits, DQ son 64 bits."
+    },
+    {
+      "type": "reorder-lines",
+      "id": "reorder-variable",
+      "instruction": "Ordena estas líneas para crear un programa válido que declare una variable byte y almacene 100 en ella:",
+      "lines": [
+        "END START",
+        "DATASEG",
+        "MOV [score], 100",
+        "CODESEG",
+        "START:",
+        "IDEAL",
+        "MOV AX, 4C00h",
+        "MODEL small",
+        "STACK 100h",
+        "INT 21h",
+        "score DB 0"
+      ],
+      "correctOrder": [5, 7, 8, 1, 10, 3, 4, 2, 6, 9, 0],
+      "explanation": "Empieza con IDEAL, MODEL, STACK. Luego DATASEG con la variable, CODESEG con START: e instrucciones, terminando con END START."
+    },
+    {
+      "type": "code",
+      "id": "code-variable-access",
+      "language": "assembly",
+      "instruction": "Escribe un programa en modo IDEAL que declare una variable byte 'count' inicializada en 0, luego cargue su valor en AL y le sume 5.",
+      "starterCode": "IDEAL\nMODEL small\nSTACK 100h\n\nDATASEG\n    count DB 0\n\nCODESEG\nSTART:\n    ; carga count en AL y suma 5\n\n    MOV AX, 4C00h\n    INT 21h\nEND START",
+      "expectedPattern": "MOV\\s+AL,\\s*\\[?count\\]?",
+      "explanation": "Usa 'MOV AL, [count]' para cargar la variable, luego 'ADD AL, 5' para sumar 5."
+    }
+  ]
+}

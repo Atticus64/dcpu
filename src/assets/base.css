@@ -1,0 +1,66 @@
+/* Default theme: One Dark (fallback while JS loads) */
+:root {
+  --color-bg: #282c34;
+  --color-bg-soft: #21252b;
+  --color-bg-mute: #1b1d23;
+  --color-text: #abb2bf;
+  --color-heading: #e5c07b;
+  --color-border: rgba(84, 84, 84, 0.48);
+  --color-border-hover: rgba(84, 84, 84, 0.65);
+  --color-success-bg: #2b5e2b44;
+  --color-success-border: #4caf50;
+  --color-success-text: #4caf50;
+  --color-error-bg: #5e2b2b44;
+  --color-error-border: #f44336;
+  --color-error-text: #f44336;
+  --color-code-bg: #1e1e1e;
+  --color-code-text: #d4d4d4;
+  --color-output-bg: #1e1e1e;
+  --color-output-text: #d4d4d4;
+  --color-output-error: #f48771;
+  --color-theme-accent: #61afef;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --section-gap: 160px;
+}
+
+/* backward-compatible aliases */
+:root {
+  --color-background: var(--color-bg);
+  --color-background-soft: var(--color-bg-soft);
+  --color-background-mute: var(--color-bg-mute);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition:
+    color 0.3s,
+    background-color 0.3s;
+  line-height: 1.6;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

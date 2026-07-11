@@ -1,0 +1,30 @@
+{
+  "lessonId": "03-arithmetic",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-arithmetic",
+      "question": "After 'MOV AX, 10' / 'ADD AX, 5', what value is in AX?",
+      "options": ["5", "10", "15", "50"],
+      "correctIndex": 2,
+      "explanation": "ADD AX, 5 adds 5 to AX, so AX becomes 10 + 5 = 15."
+    },
+    {
+      "type": "multiple-choice",
+      "id": "mc-mul-div",
+      "question": "After 'MOV AL, 7' / 'MOV BL, 3' / 'MUL BL', where is the result stored?",
+      "options": ["AL", "AH", "AX", "BX"],
+      "correctIndex": 2,
+      "explanation": "MUL of 8-bit values (AL times operand) stores the 16-bit result in AX."
+    },
+    {
+      "type": "code",
+      "id": "code-arithmetic",
+      "language": "assembly",
+      "instruction": "Write an IDEAL-mode program that adds 20 and 15, then subtracts 7 from the result using registers only (no DATASEG needed).",
+      "starterCode": "IDEAL\nMODEL small\nSTACK 100h\n\nCODESEG\nSTART:\n    ; calculate (20 + 15) - 7\n\n    MOV AX, 4C00h\n    INT 21h\nEND START",
+      "expectedPattern": "(ADD|SUB)",
+      "explanation": "Use MOV to load values, ADD to sum them, and SUB to subtract. For example: MOV AX, 20 / MOV BX, 15 / ADD AX, BX / SUB AX, 7."
+    }
+  ]
+}

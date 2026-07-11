@@ -1,0 +1,41 @@
+{
+  "lessonId": "01-hello-registers",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-registers",
+      "question": "Which register is known as the accumulator and is most commonly used for arithmetic operations?",
+      "options": ["AX", "BX", "CX", "DX"],
+      "correctIndex": 0,
+      "explanation": "AX (Accumulator) is the primary register for arithmetic operations like addition, subtraction, and I/O operations."
+    },
+    {
+      "type": "reorder-lines",
+      "id": "reorder-mov",
+      "instruction": "Arrange these lines to create a valid IDEAL-mode program that stores 10 in AX and 20 in BX:",
+      "lines": [
+        "END START",
+        "MOV AX, 10",
+        "CODESEG",
+        "START:",
+        "IDEAL",
+        "MOV BX, 20",
+        "MODEL small",
+        "STACK 100h",
+        "MOV AX, 4C00h",
+        "INT 21h"
+      ],
+      "correctOrder": [4, 6, 7, 2, 3, 1, 5, 8, 9, 0],
+      "explanation": "A valid IDEAL mode program starts with IDEAL, then MODEL and STACK directives, followed by CODESEG, the entry point, instructions, and finally END."
+    },
+    {
+      "type": "code",
+      "id": "code-mov-values",
+      "language": "assembly",
+      "instruction": "Write an IDEAL-mode assembly program that moves the value 42 into AX and the value 7 into BX.",
+      "starterCode": "IDEAL\nMODEL small\nSTACK 100h\n\nCODESEG\nSTART:\n    ; your code here\n\n    MOV AX, 4C00h\n    INT 21h\nEND START",
+      "expectedPattern": "MOV\\s+AX,\\s*42",
+      "explanation": "You need to add 'MOV AX, 42' and 'MOV BX, 7' between START: and the exit sequence."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+@import './base.css';
+@import './themes.css';
+
+#app {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+a {
+  color: var(--color-heading);
+  transition: 0.15s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: transparent;
+  }
+}
+
+body {
+  display: block;
+  place-items: unset;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-heading);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background: var(--color-border-hover);
+}

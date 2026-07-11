@@ -1,0 +1,42 @@
+{
+  "lessonId": "02-memory-variables",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-memory",
+      "question": "Which directive defines a 16-bit (2-byte) variable?",
+      "options": ["DB", "DW", "DD", "DQ"],
+      "correctIndex": 1,
+      "explanation": "DW (Define Word) allocates 16 bits (2 bytes). DB is 8 bits, DD is 32 bits, DQ is 64 bits."
+    },
+    {
+      "type": "reorder-lines",
+      "id": "reorder-variable",
+      "instruction": "Arrange these lines to create a valid program that declares a byte variable and stores 100 in it:",
+      "lines": [
+        "END START",
+        "DATASEG",
+        "MOV [score], 100",
+        "CODESEG",
+        "START:",
+        "IDEAL",
+        "MOV AX, 4C00h",
+        "MODEL small",
+        "STACK 100h",
+        "INT 21h",
+        "score DB 0"
+      ],
+      "correctOrder": [5, 7, 8, 1, 10, 3, 4, 2, 6, 9, 0],
+      "explanation": "Start with IDEAL, MODEL, STACK. Then DATASEG with the variable, CODESEG with START: and instructions, ending with END START."
+    },
+    {
+      "type": "code",
+      "id": "code-variable-access",
+      "language": "assembly",
+      "instruction": "Write an IDEAL-mode program that declares a byte variable 'count' initialized to 0, then loads its value into AL and adds 5 to it.",
+      "starterCode": "IDEAL\nMODEL small\nSTACK 100h\n\nDATASEG\n    count DB 0\n\nCODESEG\nSTART:\n    ; load count into AL and add 5\n\n    MOV AX, 4C00h\n    INT 21h\nEND START",
+      "expectedPattern": "MOV\\s+AL,\\s*\\[?count\\]?",
+      "explanation": "Use 'MOV AL, [count]' to load the variable, then 'ADD AL, 5' to add 5."
+    }
+  ]
+}

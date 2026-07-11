@@ -1,0 +1,30 @@
+{
+  "lessonId": "01-hello-c",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-c-main",
+      "question": "¿Cuál es el punto de entrada de todo programa en C?",
+      "options": ["start()", "main()", "begin()", "entry()"],
+      "correctIndex": 1,
+      "explanation": "Todo programa en C comienza la ejecución desde la función main()."
+    },
+    {
+      "type": "multiple-choice",
+      "id": "mc-c-printf",
+      "question": "¿Qué especificador de formato se usa para imprimir un entero en C?",
+      "options": ["%s", "%c", "%d", "%f"],
+      "correctIndex": 2,
+      "explanation": "%d es el especificador de formato para imprimir enteros con printf."
+    },
+    {
+      "type": "code",
+      "id": "code-hello-c",
+      "language": "c",
+      "instruction": "Escribe un programa en C que declare una variable entera 'x' con valor 10, y luego la imprima usando printf.",
+      "starterCode": "#include <stdio.h>\n\nint main() {\n    // tu código aquí\n    return 0;\n}",
+      "expectedPattern": "printf",
+      "explanation": "Necesitas declarar 'int x = 10;' y usar 'printf(\"%d\", x);' para imprimir el valor."
+    }
+  ]
+}

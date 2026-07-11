@@ -1,0 +1,41 @@
+{
+  "lessonId": "01-hello-registers",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-registers",
+      "question": "¿Qué registro es conocido como el acumulador y se usa más comúnmente para operaciones aritméticas?",
+      "options": ["AX", "BX", "CX", "DX"],
+      "correctIndex": 0,
+      "explanation": "AX (Acumulador) es el registro principal para operaciones aritméticas como suma, resta y operaciones de E/S."
+    },
+    {
+      "type": "reorder-lines",
+      "id": "reorder-mov",
+      "instruction": "Ordena estas líneas para crear un programa válido en modo IDEAL que almacene 10 en AX y 20 en BX:",
+      "lines": [
+        "END START",
+        "MOV AX, 10",
+        "CODESEG",
+        "START:",
+        "IDEAL",
+        "MOV BX, 20",
+        "MODEL small",
+        "STACK 100h",
+        "MOV AX, 4C00h",
+        "INT 21h"
+      ],
+      "correctOrder": [4, 6, 7, 2, 3, 1, 5, 8, 9, 0],
+      "explanation": "Un programa válido en modo IDEAL comienza con IDEAL, luego las directivas MODEL y STACK, seguidas de CODESEG, el punto de entrada, las instrucciones y finalmente END."
+    },
+    {
+      "type": "code",
+      "id": "code-mov-values",
+      "language": "assembly",
+      "instruction": "Escribe un programa assembly en modo IDEAL que mueva el valor 42 a AX y el valor 7 a BX.",
+      "starterCode": "IDEAL\nMODEL small\nSTACK 100h\n\nCODESEG\nSTART:\n    ; tu código aquí\n\n    MOV AX, 4C00h\n    INT 21h\nEND START",
+      "expectedPattern": "MOV\\s+AX,\\s*42",
+      "explanation": "Debes agregar 'MOV AX, 42' y 'MOV BX, 7' entre START: y la secuencia de salida."
+    }
+  ]
+}

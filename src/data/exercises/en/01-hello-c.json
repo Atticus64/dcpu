@@ -1,0 +1,30 @@
+{
+  "lessonId": "01-hello-c",
+  "exercises": [
+    {
+      "type": "multiple-choice",
+      "id": "mc-c-main",
+      "question": "What is the entry point of every C program?",
+      "options": ["start()", "main()", "begin()", "entry()"],
+      "correctIndex": 1,
+      "explanation": "Every C program starts execution from the main() function."
+    },
+    {
+      "type": "multiple-choice",
+      "id": "mc-c-printf",
+      "question": "What format specifier is used to print an integer in C?",
+      "options": ["%s", "%c", "%d", "%f"],
+      "correctIndex": 2,
+      "explanation": "%d is the format specifier for printing integers with printf."
+    },
+    {
+      "type": "code",
+      "id": "code-hello-c",
+      "language": "c",
+      "instruction": "Write a C program that declares an integer variable 'x' with value 10, then prints it using printf.",
+      "starterCode": "#include <stdio.h>\n\nint main() {\n    // your code here\n    return 0;\n}",
+      "expectedPattern": "printf",
+      "explanation": "You need to declare 'int x = 10;' and use 'printf(\"%d\", x);' to print the value."
+    }
+  ]
+}

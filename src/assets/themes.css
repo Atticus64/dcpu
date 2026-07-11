@@ -1,0 +1,275 @@
+/* ===== One Dark ===== */
+[data-theme="one-dark"] {
+  --color-bg: #282c34;
+  --color-bg-soft: #21252b;
+  --color-bg-mute: #1b1d23;
+  --color-text: #abb2bf;
+  --color-heading: #e5c07b;
+  --color-border: rgba(84, 84, 84, 0.48);
+  --color-border-hover: rgba(84, 84, 84, 0.65);
+  --color-success-bg: #2b5e2b44;
+  --color-success-border: #4caf50;
+  --color-success-text: #4caf50;
+  --color-error-bg: #5e2b2b44;
+  --color-error-border: #f44336;
+  --color-error-text: #f44336;
+  --color-code-bg: #1e1e1e;
+  --color-code-text: #d4d4d4;
+  --color-output-bg: #1e1e1e;
+  --color-output-text: #d4d4d4;
+  --color-output-error: #f48771;
+  --color-theme-accent: #61afef;
+}
+
+/* ===== Catppuccin Latte ===== */
+[data-theme="catppuccin-latte"] {
+  --color-bg: #eff1f5;
+  --color-bg-soft: #e6e9ef;
+  --color-bg-mute: #dce0e8;
+  --color-text: #4c4f69;
+  --color-heading: #dc8a78;
+  --color-border: #ccd0da;
+  --color-border-hover: #bcc0cc;
+  --color-success-bg: #40a02b22;
+  --color-success-border: #40a02b;
+  --color-success-text: #40a02b;
+  --color-error-bg: #d20f3922;
+  --color-error-border: #d20f39;
+  --color-error-text: #d20f39;
+  --color-code-bg: #e6e9ef;
+  --color-code-text: #4c4f69;
+  --color-output-bg: #e6e9ef;
+  --color-output-text: #4c4f69;
+  --color-output-error: #d20f39;
+  --color-theme-accent: #8839ef;
+}
+
+/* ===== Catppuccin Mocha ===== */
+[data-theme="catppuccin-mocha"] {
+  --color-bg: #1e1e2e;
+  --color-bg-soft: #181825;
+  --color-bg-mute: #11111b;
+  --color-text: #cdd6f4;
+  --color-heading: #f5e0dc;
+  --color-border: #313244;
+  --color-border-hover: #45475a;
+  --color-success-bg: #a6e3a122;
+  --color-success-border: #a6e3a1;
+  --color-success-text: #a6e3a1;
+  --color-error-bg: #f38ba822;
+  --color-error-border: #f38ba8;
+  --color-error-text: #f38ba8;
+  --color-code-bg: #181825;
+  --color-code-text: #cdd6f4;
+  --color-output-bg: #181825;
+  --color-output-text: #cdd6f4;
+  --color-output-error: #f38ba8;
+  --color-theme-accent: #cba6f7;
+}
+
+/* ===== Nord ===== */
+[data-theme="nord"] {
+  --color-bg: #2e3440;
+  --color-bg-soft: #3b4252;
+  --color-bg-mute: #434c5e;
+  --color-text: #d8dee9;
+  --color-heading: #88c0d0;
+  --color-border: #4c566a;
+  --color-border-hover: #616e88;
+  --color-success-bg: #a3be8c22;
+  --color-success-border: #a3be8c;
+  --color-success-text: #a3be8c;
+  --color-error-bg: #bf616a22;
+  --color-error-border: #bf616a;
+  --color-error-text: #bf616a;
+  --color-code-bg: #3b4252;
+  --color-code-text: #d8dee9;
+  --color-output-bg: #3b4252;
+  --color-output-text: #d8dee9;
+  --color-output-error: #bf616a;
+  --color-theme-accent: #88c0d0;
+}
+
+/* ===== GitHub Light ===== */
+[data-theme="github-light"] {
+  --color-bg: #ffffff;
+  --color-bg-soft: #f6f8fa;
+  --color-bg-mute: #e1e4e8;
+  --color-text: #24292f;
+  --color-heading: #1f2328;
+  --color-border: #d0d7de;
+  --color-border-hover: #afb8c1;
+  --color-success-bg: #dafbe122;
+  --color-success-border: #1a7f37;
+  --color-success-text: #1a7f37;
+  --color-error-bg: #ffebe922;
+  --color-error-border: #cf222e;
+  --color-error-text: #cf222e;
+  --color-code-bg: #f6f8fa;
+  --color-code-text: #24292f;
+  --color-output-bg: #f6f8fa;
+  --color-output-text: #24292f;
+  --color-output-error: #cf222e;
+  --color-theme-accent: #0969da;
+}
+
+/* ===== GitHub Dark ===== */
+[data-theme="github-dark"] {
+  --color-bg: #0d1117;
+  --color-bg-soft: #161b22;
+  --color-bg-mute: #21262d;
+  --color-text: #c9d1d9;
+  --color-heading: #f0f6fc;
+  --color-border: #30363d;
+  --color-border-hover: #484f58;
+  --color-success-bg: #3fb95022;
+  --color-success-border: #3fb950;
+  --color-success-text: #3fb950;
+  --color-error-bg: #f8514922;
+  --color-error-border: #f85149;
+  --color-error-text: #f85149;
+  --color-code-bg: #161b22;
+  --color-code-text: #c9d1d9;
+  --color-output-bg: #161b22;
+  --color-output-text: #c9d1d9;
+  --color-output-error: #f85149;
+  --color-theme-accent: #58a6ff;
+}
+
+/* ===== Dracula ===== */
+[data-theme="dracula"] {
+  --color-bg: #282a36;
+  --color-bg-soft: #21222c;
+  --color-bg-mute: #191a21;
+  --color-text: #f8f8f2;
+  --color-heading: #ff79c6;
+  --color-border: #44475a;
+  --color-border-hover: #6272a4;
+  --color-success-bg: #50fa7b22;
+  --color-success-border: #50fa7b;
+  --color-success-text: #50fa7b;
+  --color-error-bg: #ff555522;
+  --color-error-border: #ff5555;
+  --color-error-text: #ff5555;
+  --color-code-bg: #21222c;
+  --color-code-text: #f8f8f2;
+  --color-output-bg: #21222c;
+  --color-output-text: #f8f8f2;
+  --color-output-error: #ff5555;
+  --color-theme-accent: #bd93f9;
+}
+
+/* ===== Tokyo Night ===== */
+[data-theme="tokyo-night"] {
+  --color-bg: #1a1b26;
+  --color-bg-soft: #16161e;
+  --color-bg-mute: #0f0f14;
+  --color-text: #a9b1d6;
+  --color-heading: #c0caf5;
+  --color-border: #363b54;
+  --color-border-hover: #4a5080;
+  --color-success-bg: #9ece6a22;
+  --color-success-border: #9ece6a;
+  --color-success-text: #9ece6a;
+  --color-error-bg: #f7768e22;
+  --color-error-border: #f7768e;
+  --color-error-text: #f7768e;
+  --color-code-bg: #16161e;
+  --color-code-text: #a9b1d6;
+  --color-output-bg: #16161e;
+  --color-output-text: #a9b1d6;
+  --color-output-error: #f7768e;
+  --color-theme-accent: #7aa2f7;
+}
+
+/* ===== Gruvbox Dark ===== */
+[data-theme="gruvbox-dark"] {
+  --color-bg: #282828;
+  --color-bg-soft: #1d2021;
+  --color-bg-mute: #32302f;
+  --color-text: #ebdbb2;
+  --color-heading: #fabd2f;
+  --color-border: #504945;
+  --color-border-hover: #665c54;
+  --color-success-bg: #b8bb2622;
+  --color-success-border: #b8bb26;
+  --color-success-text: #b8bb26;
+  --color-error-bg: #fb493422;
+  --color-error-border: #fb4934;
+  --color-error-text: #fb4934;
+  --color-code-bg: #1d2021;
+  --color-code-text: #ebdbb2;
+  --color-output-bg: #1d2021;
+  --color-output-text: #ebdbb2;
+  --color-output-error: #fb4934;
+  --color-theme-accent: #fe8019;
+}
+
+/* ===== Solarized Dark ===== */
+[data-theme="solarized-dark"] {
+  --color-bg: #002b36;
+  --color-bg-soft: #073642;
+  --color-bg-mute: #00212b;
+  --color-text: #839496;
+  --color-heading: #268bd2;
+  --color-border: #586e75;
+  --color-border-hover: #657b83;
+  --color-success-bg: #85990022;
+  --color-success-border: #859900;
+  --color-success-text: #859900;
+  --color-error-bg: #dc322f22;
+  --color-error-border: #dc322f;
+  --color-error-text: #dc322f;
+  --color-code-bg: #073642;
+  --color-code-text: #839496;
+  --color-output-bg: #073642;
+  --color-output-text: #839496;
+  --color-output-error: #dc322f;
+  --color-theme-accent: #268bd2;
+}
+
+/* ===== Material Dark ===== */
+[data-theme="material-dark"] {
+  --color-bg: #263238;
+  --color-bg-soft: #1e272c;
+  --color-bg-mute: #1a1f24;
+  --color-text: #eeffff;
+  --color-heading: #80cbc4;
+  --color-border: #37474f;
+  --color-border-hover: #455a64;
+  --color-success-bg: #a5d6a722;
+  --color-success-border: #a5d6a7;
+  --color-success-text: #a5d6a7;
+  --color-error-bg: #ef9a9a22;
+  --color-error-border: #ef9a9a;
+  --color-error-text: #ef9a9a;
+  --color-code-bg: #1e272c;
+  --color-code-text: #eeffff;
+  --color-output-bg: #1e272c;
+  --color-output-text: #eeffff;
+  --color-output-error: #ef9a9a;
+  --color-theme-accent: #82b1ff;
+}
+
+/* ===== Ayu Mirage ===== */
+[data-theme="ayu-mirage"] {
+  --color-bg: #1f2430;
+  --color-bg-soft: #191e2a;
+  --color-bg-mute: #131721;
+  --color-text: #cbccc6;
+  --color-heading: #ffcc66;
+  --color-border: #363a45;
+  --color-border-hover: #494d57;
+  --color-success-bg: #a5d6a722;
+  --color-success-border: #a5d6a7;
+  --color-success-text: #a5d6a7;
+  --color-error-bg: #ef9a9a22;
+  --color-error-border: #ef9a9a;
+  --color-error-text: #ef9a9a;
+  --color-code-bg: #191e2a;
+  --color-code-text: #cbccc6;
+  --color-output-bg: #191e2a;
+  --color-output-text: #cbccc6;
+  --color-output-error: #f28779;
+  --color-theme-accent: #73d0ff;
+}
