@@ -5,7 +5,9 @@ lesson: 1
 
 # ¡Hola, C!
 
-¡Bienvenido a la programación en C! C es un **lenguaje compilado de nivel de sistemas** que te da acceso directo a la memoria — muy parecido al assembly.
+¡Bienvenido a la programación en C! 
+
+C es un **lenguaje compilado de nivel de sistemas** que te da acceso directo a la memoria — muy parecido al assembly.
 
 ## Tu Primer Programa en C
 

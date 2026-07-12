@@ -1,50 +1,50 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { useProgressStore } from '@/stores/progress'
-import { useLocaleStore } from '@/stores/locale'
-import LessonRenderer from '@/components/lesson/LessonRenderer.vue'
-import MultipleChoice from '@/components/exercises/MultipleChoice.vue'
-import ReorderLines from '@/components/exercises/ReorderLines.vue'
-import CodeExercise from '@/components/exercises/CodeExercise.vue'
-import type { LessonExercise } from '@/types'
+import { ref, onMounted, computed, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useProgressStore } from "@/stores/progress";
+import { useLocaleStore } from "@/stores/locale";
+import LessonRenderer from "@/components/lesson/LessonRenderer.vue";
+import MultipleChoice from "@/components/exercises/MultipleChoice.vue";
+import ReorderLines from "@/components/exercises/ReorderLines.vue";
+import CodeExercise from "@/components/exercises/CodeExercise.vue";
+import type { LessonExercise } from "@/types";
 
-const route = useRoute()
-const progress = useProgressStore()
-const locale = useLocaleStore()
+const route = useRoute();
+const progress = useProgressStore();
+const locale = useLocaleStore();
 
-const markdown = ref('')
-const lessonExercise = ref<LessonExercise | null>(null)
-const notFound = ref(false)
+const markdown = ref("");
+const lessonExercise = ref<LessonExercise | null>(null);
+const notFound = ref(false);
 
 async function loadLesson() {
-  markdown.value = ''
-  lessonExercise.value = null
-  notFound.value = false
+  markdown.value = "";
+  lessonExercise.value = null;
+  notFound.value = false;
 
-  const lessonId = route.params.lessonId as string
-  const lang = locale.locale
+  const lessonId = route.params.lessonId as string;
+  const lang = locale.locale;
 
   try {
-    const md = await import(`@/data/lessons/${lang}/${lessonId}.md?raw`)
-    markdown.value = md.default
+    const md = await import(`@/data/lessons/${lang}/${lessonId}.md?raw`);
+    markdown.value = md.default;
   } catch {
     try {
-      const md = await import(`@/data/lessons/en/${lessonId}.md?raw`)
-      markdown.value = md.default
+      const md = await import(`@/data/lessons/en/${lessonId}.md?raw`);
+      markdown.value = md.default;
     } catch {
-      notFound.value = true
-      return
+      notFound.value = true;
+      return;
     }
   }
 
   try {
-    const ex = await import(`@/data/exercises/${lang}/${lessonId}.json`)
-    lessonExercise.value = ex.default
+    const ex = await import(`@/data/exercises/${lang}/${lessonId}.json`);
+    lessonExercise.value = ex.default;
   } catch {
     try {
-      const ex = await import(`@/data/exercises/en/${lessonId}.json`)
-      lessonExercise.value = ex.default
+      const ex = await import(`@/data/exercises/en/${lessonId}.json`);
+      lessonExercise.value = ex.default;
     } catch {
       // no exercises for this lesson
     }
@@ -52,30 +52,33 @@ async function loadLesson() {
 }
 
 onMounted(async () => {
-  progress.loadFromStorage()
-  await loadLesson()
-})
+  progress.loadFromStorage();
+  await loadLesson();
+});
 
-watch(() => locale.locale, () => {
-  loadLesson()
-})
+watch(
+  () => locale.locale,
+  () => {
+    loadLesson();
+  },
+);
 
 function onComplete(id: string, passed: boolean) {
-  const lessonId = route.params.lessonId as string
-  progress.setResult(`${lessonId}-${id}`, passed)
-  progress.saveToStorage()
+  const lessonId = route.params.lessonId as string;
+  progress.setResult(`${lessonId}-${id}`, passed);
+  progress.saveToStorage();
 }
 
 const allPassed = computed(() => {
-  if (!lessonExercise.value) return false
-  return lessonExercise.value.exercises.every(ex => progress.isExercisePassed(ex.id))
-})
+  if (!lessonExercise.value) return false;
+  return lessonExercise.value.exercises.every((ex) => progress.isExercisePassed(ex.id));
+});
 </script>
 
 <template>
   <div v-if="notFound" class="not-found">
-    <h1>{{ locale.t('lesson.notFound.title') }}</h1>
-    <p>{{ locale.t('lesson.notFound.text') }}</p>
+    <h1>{{ locale.t("lesson.notFound.title") }}</h1>
+    <p>{{ locale.t("lesson.notFound.text") }}</p>
   </div>
 
   <div v-else class="lesson-page">
@@ -84,8 +87,8 @@ const allPassed = computed(() => {
     </article>
 
     <aside v-if="lessonExercise" class="exercises-section">
-      <h2>{{ locale.t('exercises.title') }}</h2>
-      <p v-if="allPassed" class="all-done">{{ locale.t('exercises.allDone') }}</p>
+      <h2>{{ locale.t("exercises.title") }}</h2>
+      <p v-if="allPassed" class="all-done">{{ locale.t("exercises.allDone") }}</p>
 
       <div v-for="exercise in lessonExercise.exercises" :key="exercise.id">
         <MultipleChoice

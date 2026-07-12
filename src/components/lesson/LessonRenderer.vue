@@ -1,139 +1,158 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
-import { useThemeStore } from '@/stores/theme'
+import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { useThemeStore } from "@/stores/theme";
 
-const props = defineProps<{ content: string }>()
+const props = defineProps<{ content: string }>();
 
-const container = ref<HTMLDivElement>()
-const themeStore = useThemeStore()
-let monacoModule: typeof import('monaco-editor') | null = null
+const container = ref<HTMLDivElement>();
+const themeStore = useThemeStore();
+let monacoModule: typeof import("monaco-editor") | null = null;
 
 interface CodeBlock {
-  code: string
-  language: string
+  code: string;
+  language: string;
 }
 
-const codeBlocks: CodeBlock[] = []
-let placeholders: HTMLPreElement[] = []
+const codeBlocks: CodeBlock[] = [];
+let placeholders: HTMLPreElement[] = [];
 
 function escapeHtml(text: string): string {
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function escapeAttr(text: string): string {
-  return text.replace(/"/g, '&quot;')
+  return text.replace(/"/g, "&quot;");
 }
 
 function renderMarkdown(md: string): string {
-  codeBlocks.length = 0
-  let html = md
+  codeBlocks.length = 0;
+  let html = md;
 
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
-    const index = codeBlocks.length
-    codeBlocks.push({ code: code.trim(), language: lang || '' })
-    return `<pre class="code-block" data-code-index="${index}" data-lang="${escapeAttr(lang)}"></pre>`
-  })
+    const index = codeBlocks.length;
+    codeBlocks.push({ code: code.trim(), language: lang || "" });
+    return `<pre class="code-block" data-code-index="${index}" data-lang="${escapeAttr(lang)}"></pre>`;
+  });
 
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>')
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
 
-  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>')
-  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>')
-  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>')
+  html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
 
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>')
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
   html = html.replace(/^\|(.+)\|$/gm, (line) => {
-    const cells = line.split('|').filter(c => c.trim())
-    if (cells.every(c => /^[\s:-]+$/.test(c))) return ''
-    return `<tr>${cells.map(c => `<td>${c.trim()}</td>`).join('')}</tr>`
-  })
-  html = html.replace(/<tr>.*<\/tr>/g, (match) => `<table>${match}</table>`)
+    const cells = line.split("|").filter((c) => c.trim());
+    if (cells.every((c) => /^[\s:-]+$/.test(c))) return "";
+    return `<tr>${cells.map((c) => `<td>${c.trim()}</td>`).join("")}</tr>`;
+  });
+  html = html.replace(/<tr>.*<\/tr>/g, (match) => `<table>${match}</table>`);
 
-  html = html.replace(/^- (.+)$/gm, '<li>$1</li>')
-  html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+  html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>");
 
-  html = html.replace(/^---$/gm, '<hr>')
+  html = html.replace(/^---$/gm, "<hr>");
 
-  const lines = html.split('\n')
-  const result: string[] = []
-  let inBlock = false
+  let file_lines = html.split("\n");
+  const result: string[] = [];
+  let inBlock = false;
+  const lines = file_lines.slice(4);
   for (const line of lines) {
-    const trimmed = line.trim()
+    const trimmed = line.trim();
     if (!trimmed) {
-      if (inBlock) { result.push('</p>'); inBlock = false }
-      continue
+      if (inBlock) {
+        result.push("</p>");
+        inBlock = false;
+      }
+      continue;
     }
-    if (trimmed.startsWith('<')) {
-      if (inBlock) { result.push('</p>'); inBlock = false }
-      result.push(line)
-    } else if (trimmed.startsWith('|') || trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-      if (inBlock) { result.push('</p>'); inBlock = false }
-      result.push(line)
+    if (trimmed.startsWith("<")) {
+      if (inBlock) {
+        result.push("</p>");
+        inBlock = false;
+      }
+      result.push(line);
+    } else if (trimmed.startsWith("|") || trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+      if (inBlock) {
+        result.push("</p>");
+        inBlock = false;
+      }
+      result.push(line);
     } else {
-      if (!inBlock) { result.push('<p>'); inBlock = true }
-      result.push(line)
+      if (!inBlock) {
+        result.push("<p>");
+        inBlock = true;
+      }
+      result.push(line);
     }
   }
-  if (inBlock) result.push('</p>')
+  if (inBlock) result.push("</p>");
 
-  return result.join('\n')
+  return result.join("\n");
 }
 
 async function applyColorization() {
-  if (!monacoModule || !container.value) return
-  placeholders = [...container.value.querySelectorAll<HTMLPreElement>('.code-block')]
+  if (!monacoModule || !container.value) return;
+  placeholders = [...container.value.querySelectorAll<HTMLPreElement>(".code-block")];
   for (const el of placeholders) {
-    const index = parseInt(el.dataset.codeIndex || '')
-    const block = codeBlocks[index]
-    if (!block) continue
+    const index = parseInt(el.dataset.codeIndex || "");
+    const block = codeBlocks[index];
+    if (!block) continue;
 
-    const lang = block.language === 'asm' ? 'x86asm' : (block.language || 'txt')
+    const lang = block.language === "asm" ? "x86asm" : block.language || "txt";
     try {
-      const colored = await monacoModule.editor.colorize(block.code, lang, { tabSize: 2 })
-      el.innerHTML = `<code>${colored}</code>`
+      const colored = await monacoModule.editor.colorize(block.code, lang, { tabSize: 2 });
+      el.innerHTML = `<code>${colored}</code>`;
     } catch {
-      el.innerHTML = `<pre><code>${escapeHtml(block.code)}</code></pre>`
+      el.innerHTML = `<pre><code>${escapeHtml(block.code)}</code></pre>`;
     }
   }
 }
 
 async function initMonaco() {
-  if (monacoModule) return
-  const monaco = await import('monaco-editor')
-  monacoModule = monaco
+  if (monacoModule) return;
+  const monaco = await import("monaco-editor");
+  monacoModule = monaco;
 
-  const { registerMonacoThemes } = await import('@/utils/monaco-themes')
-  const { registerAssemblyLanguage } = await import('@/utils/monaco-languages')
-  registerMonacoThemes(monaco)
-  registerAssemblyLanguage(monaco)
-  monaco.editor.setTheme(themeStore.theme)
+  const { registerMonacoThemes } = await import("@/utils/monaco-themes");
+  const { registerAssemblyLanguage } = await import("@/utils/monaco-languages");
+  registerMonacoThemes(monaco);
+  registerAssemblyLanguage(monaco);
+  monaco.editor.setTheme(themeStore.theme);
 }
 
 onMounted(async () => {
-  await initMonaco()
-  await applyColorization()
-})
+  await initMonaco();
+  await applyColorization();
+});
 
-watch(() => themeStore.theme, async () => {
-  if (monacoModule) {
-    monacoModule.editor.setTheme(themeStore.theme)
-    await applyColorization()
-  }
-})
+watch(
+  () => themeStore.theme,
+  async () => {
+    if (monacoModule) {
+      monacoModule.editor.setTheme(themeStore.theme);
+      await applyColorization();
+    }
+  },
+);
 
-watch(() => props.content, async () => {
-  if (monacoModule) {
-    await nextTick()
-    await applyColorization()
-  }
-})
+watch(
+  () => props.content,
+  async () => {
+    if (monacoModule) {
+      await nextTick();
+      await applyColorization();
+    }
+  },
+);
 
-const rendered = computed(() => renderMarkdown(props.content))
+const rendered = computed(() => renderMarkdown(props.content));
 </script>
 
 <template>

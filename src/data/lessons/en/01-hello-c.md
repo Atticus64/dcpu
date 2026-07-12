@@ -5,7 +5,9 @@ lesson: 1
 
 # Hello, C!
 
-Welcome to C programming! C is a **compiled, systems-level language** that gives you direct access to memory — much like assembly.
+Welcome to C programming! 
+
+C is a **compiled, systems-level language** that gives you direct access to memory — much like assembly.
 
 ## Your First C Program
 
