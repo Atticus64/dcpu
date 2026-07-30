@@ -22,7 +22,7 @@
       "id": "code-arithmetic",
       "language": "assembly",
       "instruction": "Escribe un programa en modo IDEAL que sume 20 y 15, luego reste 7 del resultado usando solo registros (no necesita DATASEG).",
-      "starterCode": "ideal\nmodel small\nstack 100h\n\ncodeseg\nstart:\n    ; calcular (20 + 15) - 7\n\n    mov ax, 4C00h\n    int 21h\end start",
+      "starterCode": "ideal\nmodel small\nstack 100h\n\ncodeseg\nstart:\n    ; calcular (20 + 15) - 7\n\n    mov ax, 4C00h\n    int 21h\nend start",
       "expectedPattern": "(ADD|SUB)",
       "explanation": "Usa MOV para cargar valores, ADD para sumarlos y SUB para restar. Por ejemplo: MOV AX, 20 / MOV BX, 15 / ADD AX, BX / SUB AX, 7."
     }
