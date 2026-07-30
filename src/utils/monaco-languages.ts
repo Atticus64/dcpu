@@ -45,7 +45,12 @@ const DIRECTIVES = [
   'END', 'STARTUP', 'EXITCODE',
 ]
 
-const KEYWORDS = [...INSTRUCTIONS, ...REGISTERS, ...DIRECTIVES]
+const KEYWORDS = [
+  ...INSTRUCTIONS, ...REGISTERS, ...DIRECTIVES,
+  ...INSTRUCTIONS.map(i => i.toLowerCase()),
+  ...REGISTERS.map(r => r.toLowerCase()),
+  ...DIRECTIVES.map(d => d.toLowerCase()),
+]
 const keywordMap: Record<string, true> = {}
 for (const k of KEYWORDS) keywordMap[k] = true
 
