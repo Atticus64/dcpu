@@ -213,8 +213,9 @@ function closeMenu() {
 }
 .mobile-pickers {
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
 }
 
 /* Transitions */
