@@ -2,6 +2,7 @@ export const es: Record<string, string> = {
   'nav.home': 'Inicio',
   'nav.lessons': 'Lecciones',
   'nav.blog': 'Blog',
+  'nav.playground': 'Playground',
   'hero.title': 'DCPU — Aprende Assembly y C',
   'hero.subtitle': 'Un curso práctico de assembly x86 (modo IDEAL de Turbo Assembler) y programación en C. Escribe código real, obtén retroalimentación real.',
   'course.assembly.title': 'Fundamentos de Assembly',

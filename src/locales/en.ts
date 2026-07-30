@@ -2,6 +2,7 @@ export const en: Record<string, string> = {
   'nav.home': 'Home',
   'nav.lessons': 'Lessons',
   'nav.blog': 'Blog',
+  'nav.playground': 'Playground',
   'hero.title': 'DCPU — Learn Assembly & C',
   'hero.subtitle': 'A hands-on course in x86 assembly (Turbo Assembler IDEAL mode) and C programming. Write real code, get real feedback.',
   'course.assembly.title': 'Assembly Fundamentals',

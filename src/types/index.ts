@@ -51,3 +51,9 @@ export interface CompileResponse {
   stderr: string
   error: string | null
 }
+
+export interface CompileRunResponse {
+  success: boolean
+  exeBase64: string | null
+  error: string | null
+}

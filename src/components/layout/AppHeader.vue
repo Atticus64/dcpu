@@ -13,6 +13,7 @@ const links = [
   { path: '/', labelKey: 'nav.home' },
   { path: '/lessons/01-hello-registers', labelKey: 'nav.lessons' },
   { path: '/blog', labelKey: 'nav.blog' },
+  { path: '/playground', labelKey: 'nav.playground' },
 ]
 
 function toggleMenu() {
