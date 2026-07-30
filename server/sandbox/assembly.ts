@@ -1,4 +1,5 @@
 import { join } from "@std/path";
+import { log } from "../lib/logger.ts";
 
 const TOOLS_DIR = join(import.meta.dirname!, "..", "..", "tools", "jwasm");
 const JWASM_PATH = join(TOOLS_DIR, "JWasm.exe");
@@ -8,6 +9,7 @@ function stripAnsi(s: string): string {
 }
 
 export async function compileAssembly(code: string) {
+  log.debug(`compileAssembly: tmpDir created, code.length=${code.length}`);
   const tmpDir = await Deno.makeTempDir({ prefix: "dcpu-asm-" });
   try {
     const srcFile = join(tmpDir, "input.asm");
@@ -25,9 +27,13 @@ export async function compileAssembly(code: string) {
       stderr: "piped",
     });
 
+    const start = Date.now();
     const proc = await cmd.output();
+    const ms = Date.now() - start;
     const stdout = new TextDecoder().decode(proc.stdout);
     const stderr = new TextDecoder().decode(proc.stderr);
+
+    log.debug(`compileAssembly: exit_code=${proc.code}, duration=${ms}ms`);
 
     const cleanedStdout = stripAnsi(stdout);
     const cleanedStderr = stripAnsi(stderr);
@@ -67,6 +73,7 @@ export async function compileAssembly(code: string) {
 }
 
 export async function compileAssemblyRun(code: string) {
+  log.debug(`compileAssemblyRun: tmpDir created, code.length=${code.length}`);
   const tmpDir = await Deno.makeTempDir({ prefix: "dcpu-asm-run-" });
   try {
     const srcFile = join(tmpDir, "input.asm");
@@ -85,9 +92,13 @@ export async function compileAssemblyRun(code: string) {
       stderr: "piped",
     });
 
+    const start = Date.now();
     const proc = await cmd.output();
+    const ms = Date.now() - start;
     const stdout = new TextDecoder().decode(proc.stdout);
     const stderr = new TextDecoder().decode(proc.stderr);
+
+    log.debug(`compileAssemblyRun: exit_code=${proc.code}, duration=${ms}ms`);
 
     const cleanedStdout = stripAnsi(stdout);
     const cleanedStderr = stripAnsi(stderr);

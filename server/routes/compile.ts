@@ -1,6 +1,7 @@
 import { Router } from "@oak/oak";
 import { compileAssembly, compileAssemblyRun } from "../sandbox/assembly.ts";
 import { compileC } from "../sandbox/c.ts";
+import { log } from "../lib/logger.ts";
 
 const compileRouter = new Router();
 
@@ -14,7 +15,10 @@ compileRouter.post("/", async (ctx) => {
     return;
   }
 
+  log.debug(`Compile request: language=${language}, code.length=${code.length}`);
+
   try {
+    const start = Date.now();
     let result;
     if (language === "assembly") {
       result = await compileAssembly(code);
@@ -26,8 +30,15 @@ compileRouter.post("/", async (ctx) => {
       return;
     }
 
+    const ms = Date.now() - start;
+    log.debug(`Compile result: language=${language}, success=${result.success}, duration=${ms}ms`);
+    if (!result.success) {
+      log.warn(`Compilation failed: language=${language}`, (result as { error: string }).error);
+    }
+
     ctx.response.body = result;
   } catch (err) {
+    log.error(`Compile error: language=${language}`, err);
     ctx.response.status = 500;
     ctx.response.body = {
       success: false,
@@ -46,7 +57,10 @@ compileRouter.post("/run", async (ctx) => {
     return;
   }
 
+  log.debug(`Compile+run request: language=${language}, code.length=${code.length}`);
+
   try {
+    const start = Date.now();
     let result;
     if (language === "assembly") {
       result = await compileAssemblyRun(code);
@@ -56,8 +70,15 @@ compileRouter.post("/run", async (ctx) => {
       return;
     }
 
+    const ms = Date.now() - start;
+    log.debug(`Compile+run result: language=${language}, success=${result.success}, duration=${ms}ms`);
+    if (!result.success) {
+      log.warn(`Compile+run failed: language=${language}`, (result as { error: string }).error);
+    }
+
     ctx.response.body = result;
   } catch (err) {
+    log.error(`Compile+run error: language=${language}`, err);
     ctx.response.status = 500;
     ctx.response.body = {
       success: false,

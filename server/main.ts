@@ -1,5 +1,6 @@
 import { Application, Router } from "@oak/oak";
 import { compileRouter } from "./routes/compile.ts";
+import { log } from "./lib/logger.ts";
 
 const router = new Router();
 
@@ -22,9 +23,17 @@ app.use(async (ctx, next) => {
   await next();
 });
 
+app.use(async (ctx, next) => {
+  const start = Date.now();
+  await next();
+  const ms = Date.now() - start;
+  log.info(`${ctx.request.method} ${ctx.request.url.pathname} ${ctx.response.status} ${ms}ms`);
+});
+
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const PORT = 3001;
-console.log(`Server running on http://localhost:${PORT}`);
+const PORT = Number(Deno.env.get("PORT") || "3001");
+log.info(`Starting server on port ${PORT}`);
+log.debug(`Tools dir: ${import.meta.dirname}`);
 await app.listen({ port: PORT });

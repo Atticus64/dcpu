@@ -1,9 +1,11 @@
 import { join } from "@std/path";
+import { log } from "../lib/logger.ts";
 
 const TOOLS_DIR = join(import.meta.dirname!, "..", "..", "tools", "tcc", "tcc");
 const TCC_PATH = join(TOOLS_DIR, "tcc.exe");
 
 export async function compileC(code: string) {
+  log.debug(`compileC: tmpDir created, code.length=${code.length}`);
   const tmpDir = await Deno.makeTempDir({ prefix: "dcpu-c-" });
   try {
     const srcFile = join(tmpDir, "input.c");
@@ -12,11 +14,9 @@ export async function compileC(code: string) {
     await Deno.writeTextFile(srcFile, code);
 
     const args = ["-run"];
-    // For programs with main(), we use -run for compile+execute
     if (hasMain) {
       args.push(srcFile);
     } else {
-      // For simple expressions, we wrap in main and output result
       const wrapped = `#include <stdio.h>\nint main() { ${code}; return 0; }\n`;
       await Deno.writeTextFile(srcFile, wrapped);
       args.push(srcFile);
@@ -33,9 +33,13 @@ export async function compileC(code: string) {
       stderr: "piped",
     });
 
+    const start = Date.now();
     const proc = await cmd.output();
+    const ms = Date.now() - start;
     const stdout = new TextDecoder().decode(proc.stdout);
     const stderr = new TextDecoder().decode(proc.stderr);
+
+    log.debug(`compileC: exit_code=${proc.code}, hasMain=${hasMain}, duration=${ms}ms`);
 
     if (!proc.success) {
       return {
