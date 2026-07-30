@@ -16,6 +16,7 @@
     "format": "oxfmt src/"
   },
   "dependencies": {
+    "js-dos": "^8.4.1",
     "monaco-editor": "^0.55.1",
     "pinia": "^3.0.4",
     "vue": "^3.5.38",
