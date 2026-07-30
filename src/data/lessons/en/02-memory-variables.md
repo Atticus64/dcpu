@@ -12,22 +12,22 @@ Registers are fast but limited — there are only a handful of them. For most pr
 In IDEAL mode, variables are declared in `DATASEG`:
 
 ```asm
-IDEAL
-MODEL small
-STACK 100h
+ideal
+model small
+stack 100h
 
-DATASEG
-    myVar   DB  42        ; Define Byte (8 bits)
-    myWord  DW  1000h     ; Define Word (16 bits)
-    myDWord DD  0AABBCCDDh ; Define Double Word (32 bits)
+dataseg
+    myVar   db  42        ; Define Byte (8 bits)
+    myWord  dw  1000h     ; Define Word (16 bits)
+    myDWord dd  0AABBCCDDh ; Define Double Word (32 bits)
 
-CODESEG
-START:
+codeseg
+start:
     ; your code here
 
-    MOV AX, 4C00h
-    INT 21h
-END START
+    mov ax, 4c00h
+    int 21h
+end start
 ```
 
 ## Data Directives

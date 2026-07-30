@@ -12,22 +12,22 @@ Los registros son rápidos pero limitados — solo hay unos pocos. Para la mayor
 En modo IDEAL, las variables se declaran en `DATASEG`:
 
 ```asm
-IDEAL
-MODEL small
-STACK 100h
+ideal
+model small
+stack 100h
 
-DATASEG
-    myVar   DB  42        ; Definir Byte (8 bits)
-    myWord  DW  1000h     ; Definir Word (16 bits)
-    myDWord DD  0AABBCCDDh ; Definir Doble Word (32 bits)
+dataseg
+    myVar   db  42        ; Definir Byte (8 bits)
+    myWord  dw  1000h     ; Definir Word (16 bits)
+    myDWord dd  0AABBCCDDh ; Definir Doble Word (32 bits)
 
-CODESEG
-START:
+codeseg
+start:
     ; tu código aquí
 
-    MOV AX, 4C00h
-    INT 21h
-END START
+    mov ax, 4c00h
+    int 21h
+end start
 ```
 
 ## Directivas de Datos
@@ -63,9 +63,9 @@ MOV [myVar], 10     ; Almacenar 10 en myVar
 A veces necesitas la **dirección** de una variable, no su valor:
 
 ```asm
-MOV DX, OFFSET myVar    ; Cargar la dirección de myVar en DX
+mov dx, offset myVar    ; Cargar la dirección de myVar en DX
 ; o equivalentemente:
-LEA DX, [myVar]         ; Load Effective Address
+lea dx, [myVar]         ; Load Effective Address
 ```
 
 `OFFSET` es un operador de compilación. `LEA` es una instrucción ejecutada en tiempo real.
@@ -87,17 +87,17 @@ char* ptr = &myVar;                 // MOV DX, OFFSET myVar
 Puedes definir varias variables en orden:
 
 ```asm
-DATASEG
-    count   DB  0
-    sum     DW  0
-    message DB  'H', 'e', 'l', 'l', 'o'
+dataseg
+    count   db  0
+    sum     dw  0
+    message db  'H', 'e', 'l', 'l', 'o'
 
-CODESEG
-START:
-    MOV [count], 5
-    MOV AX, [sum]
-    ADD AX, 10
-    MOV [sum], AX
+codeseg
+start:
+    mov [count], 5
+    mov ax, [sum]
+    add ax, 10
+    mov [sum], ax
 ```
 
 ## Puntos Clave

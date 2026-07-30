@@ -33,7 +33,7 @@
       "id": "code-mov-values",
       "language": "assembly",
       "instruction": "Escribe un programa assembly en modo IDEAL que mueva el valor 42 a AX y el valor 7 a BX.",
-      "starterCode": "IDEAL\nMODEL small\nSTACK 100h\n\nCODESEG\nSTART:\n    ; tu código aquí\n\n    MOV AX, 4C00h\n    INT 21h\nEND START",
+      "starterCode": "ideal\nmodel small\nstack 100h\n\ncodeseg\nstart:\n    ; tu código aquí\n\n    mov ax, 4C00h\n    int 21h\end start",
       "expectedPattern": "MOV\\s+AX,\\s*42",
       "explanation": "Debes agregar 'MOV AX, 42' y 'MOV BX, 7' entre START: y la secuencia de salida."
     }

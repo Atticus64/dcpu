@@ -10,24 +10,24 @@ Ahora que conoces los registros y la memoria, hagamos matemáticas con **instruc
 ## ADD — Suma
 
 ```asm
-MOV AX, 10
-MOV BX, 20
-ADD AX, BX      ; AX = AX + BX = 30
+mov ax, 10
+mov bx, 20
+add ax, bx      ; AX = AX + BX = 30
 ```
 
 `ADD` toma dos operandos: `ADD destino, fuente`. El resultado reemplaza al destino.
 
 ```asm
-ADD AX, 5       ; AX = AX + 5
-ADD [count], 1  ; Sumar 1 a variable en memoria
+add ax, 5       ; AX = AX + 5
+add [count], 1  ; Sumar 1 a variable en memoria
 ```
 
 ## SUB — Resta
 
 ```asm
-MOV AX, 50
-SUB AX, 15      ; AX = AX - 15 = 35
-SUB BX, AX      ; BX = BX - AX
+mov ax, 50
+sub ax, 15      ; AX = AX - 15 = 35
+sub bx, ax      ; BX = BX - AX
 ```
 
 ## INC y DEC — Incremento y Decremento
@@ -35,9 +35,9 @@ SUB BX, AX      ; BX = BX - AX
 Formas cortas de sumar o restar 1:
 
 ```asm
-INC AX          ; AX = AX + 1
-DEC BX          ; BX = BX - 1
-INC [count]     ; count = count + 1
+inc ax          ; AX = AX + 1
+dec bx          ; BX = BX - 1
+inc [count]     ; count = count + 1
 ```
 
 Son más pequeñas y rápidas que `ADD AX, 1`.
@@ -47,22 +47,22 @@ Son más pequeñas y rápidas que `ADD AX, 1`.
 `CMP` resta el segundo operando del primero **sin almacenar el resultado**. Solo establece banderas (Zero, Carry, Sign, etc.):
 
 ```asm
-MOV AX, 10
-CMP AX, 10      ; Bandera Zero activada (AX == 10)
-CMP AX, 5       ; Bandera Sign activada (AX > 5)
-CMP AX, 20      ; Bandera Carry activada (AX < 20)
+mov ax, 10
+cmp ax, 10      ; Bandera Zero activada (AX == 10)
+cmp ax, 5       ; Bandera Sign activada (AX > 5)
+cmp ax, 20      ; Bandera Carry activada (AX < 20)
 ```
 
-Usarás `CMP` con saltos condicionales (siguiente lección).
+Usarás `cmp` con saltos condicionales (siguiente lección).
 
 ## MUL — Multiplicación sin signo
 
-`MUL` multiplica `AL` o `AX` por otro valor:
+`mul` multiplica `AL` o `AX` por otro valor:
 
 ```asm
-MOV AL, 5
-MOV BL, 3
-MUL BL          ; AX = AL * BL = 5 * 3 = 15
+mov al, 5
+mov bl, 3
+mul bl          ; AX = AL * BL = 5 * 3 = 15
 ```
 
 - `MUL r/m8` → multiplica `AL` por operando, resultado en `AX`
@@ -71,9 +71,9 @@ MUL BL          ; AX = AL * BL = 5 * 3 = 15
 ## DIV — División sin signo
 
 ```asm
-MOV AX, 15
-MOV BL, 4
-DIV BL          ; AL = cociente (3), AH = residuo (3)
+mov ax, 15
+mov bl, 4
+div bl          ; AL = cociente (3), AH = residuo (3)
 ```
 
 - `DIV r/m8` → divide `AX` por operando: cociente en `AL`, residuo en `AH`
@@ -102,26 +102,27 @@ unsigned char ah_r = ax_val % 4;  // DIV BL (residuo)
 ## Ejemplo Completo
 
 ```asm
-IDEAL
-MODEL small
-STACK 100h
+ideal
+model small
+stack 100h
 
-DATASEG
-    result DW 0
+dataseg
+    result dw 0
 
-CODESEG
-START:
+codeseg
+start:
     ; Calcular 5 + 3 * 2
-    MOV AX, 3
-    MOV BL, 2
-    MUL BL          ; AX = 3 * 2 = 6
+    mov ax, 3
+    mov bl, 2
+    mul bl
+    ; AX = 3 * 2 = 6
 
-    ADD AX, 5       ; AX = 6 + 5 = 11
-    MOV [result], AX
+    add ax, 5       ; AX = 6 + 5 = 11
+    mov [result], ax
 
-    MOV AX, 4C00h
-    INT 21h
-END START
+    mov ax, 4C00h
+    int 21h
+end start
 ```
 
 ## Puntos Clave

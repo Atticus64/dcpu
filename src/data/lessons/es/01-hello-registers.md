@@ -36,8 +36,8 @@ Dentro de la propia CPU hay ubicaciones especiales de almacenamiento ultrarrápi
 Para poner un valor en un registro, usa la instrucción **`MOV`**:
 
 ```asm
-MOV AX, 42    ; Copia 42 en AX
-MOV BX, 7     ; Copia 7 en BX
+mov ax, 42    ; Copia 42 en AX
+mov bx, 7     ; Copia 7 en BX
 ```
 
 Piénsalo como una asignación en C:
@@ -52,21 +52,21 @@ bx = 7;    // MOV BX, 7
 Turbo Assembler en **modo IDEAL** nos da una sintaxis limpia y estructurada:
 
 ```asm
-IDEAL                    ; Habilita modo IDEAL
-MODEL small              ; Modelo de memoria
-STACK 100h               ; Tamaño de pila
+ideal                    ; Habilita modo IDEAL
+model small              ; Modelo de memoria
+stack 100h               ; Tamaño de pila
 
-DATASEG                  ; Segmento de datos
+dataseg                  ; Segmento de datos
     ; las variables van aquí
 
-CODESEG                  ; Segmento de código
-START:                   ; Punto de entrada
-    MOV AX, 42
-    MOV BX, 7
+codeseg                  ; Segmento de código
+start:                   ; Punto de entrada
+    mov ax, 42
+    mov bx, 7
 
-    MOV AX, 4C00h        ; Función de salida
-    INT 21h              ; Interrupción DOS
-END START                ; Fin del programa
+    mov ax, 4C00h        ; Función de salida
+    int 21h              ; Interrupción DOS
+end start                ; Fin del programa
 ```
 
 ## Programa Equivalente en C

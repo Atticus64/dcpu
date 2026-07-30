@@ -67,11 +67,11 @@ int main() {
 
 | Assembly | C |
 |----------|---|
-| `MOV AX, 42` | `int ax = 42;` |
-| `ADD AX, BX` | `ax = ax + bx;` |
-| `MOV [var], AX` | `var = ax;` |
-| `MOV AX, [var]` | `ax = var;` |
-| `INT 21h` (salida) | `return 0;` |
+| `mov ax, 42` | `int ax = 42;` |
+| `add ax, bx` | `ax = ax + bx;` |
+| `mov [var], ax` | `var = ax;` |
+| `mov ax, [var]` | `ax = var;` |
+| `int 21h` (salida) | `return 0;` |
 
 ## Puntos Clave
 
