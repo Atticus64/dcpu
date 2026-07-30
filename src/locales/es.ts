@@ -33,7 +33,7 @@ export const es: Record<string, string> = {
   "exercise.reorder.incorrect": "No está bien.",
   "exercise.reorder.tryAgain": "Intentar de nuevo",
   "exercise.code.title": "Ejercicio de Código",
-  "exercise.code.run": "Ejecutar",
+  "exercise.code.run": "Ensamblar y Ejecutar",
   "exercise.code.running": "Ejecutando...",
   "exercise.code.reset": "Reiniciar",
   "exercise.code.greatJob": "¡Buen trabajo!",

@@ -88,6 +88,12 @@ onMounted(() => {
     editor.onDidChangeModelContent(() => {
       code.value = editor!.getValue();
     });
+
+    editor.onDidFocusEditorText(() => {
+      if (showDos.value) {
+        toggleDos();
+      }
+    });
   }
 });
 
@@ -113,6 +119,8 @@ function base64ToUint8Array(base64: string): Uint8Array {
 
 async function run() {
   if (!dosContainer.value) return;
+
+  if (!showDos.value) showDos.value = true;
 
   isRunning.value = true;
   error.value = "";
@@ -256,11 +264,14 @@ function toggleDos() {
 .btn-run {
   background: var(--color-theme-accent);
   color: #fff;
+  transition: color 0.2s;
   border-color: var(--color-theme-accent);
   font-weight: 600;
 }
 .btn-run:hover {
-  filter: brightness(1.1);
+  /*filter: brightness(0.5);*/
+  color: #000;
+  background: var(--color-theme-accent);
 }
 .btn-run:disabled {
   opacity: 0.6;
