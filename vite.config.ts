@@ -16,6 +16,7 @@ export default defineConfig({
     },
   },
   build: {
+    modulePreload: false,
     rolldownOptions: {
       output: {
         manualChunks(id: string) {
