@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
-import * as monaco from 'monaco-editor'
-import { registerMonacoThemes } from '@/utils/monaco-themes'
-import { registerAssemblyLanguage } from '@/utils/monaco-languages'
-import { useThemeStore } from '@/stores/theme'
-import { useLocaleStore } from '@/stores/locale'
-import { compileAndRun } from '@/api/compiler'
+import { ref, watch, onMounted, onUnmounted } from "vue";
+import * as monaco from "monaco-editor";
+import { registerMonacoThemes } from "@/utils/monaco-themes";
+import { registerAssemblyLanguage } from "@/utils/monaco-languages";
+import { useThemeStore } from "@/stores/theme";
+import { useLocaleStore } from "@/stores/locale";
+import { compileAndRun } from "@/api/compiler";
 
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
+import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
+import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
+import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
-    if (label === 'json') return new JsonWorker()
-    if (label === 'css' || label === 'scss' || label === 'less') return new CssWorker()
-    if (label === 'html' || label === 'handlebars' || label === 'razor') return new HtmlWorker()
-    if (label === 'typescript' || label === 'javascript') return new TsWorker()
-    return new EditorWorker()
+    if (label === "json") return new JsonWorker();
+    if (label === "css" || label === "scss" || label === "less") return new CssWorker();
+    if (label === "html" || label === "handlebars" || label === "razor") return new HtmlWorker();
+    if (label === "typescript" || label === "javascript") return new TsWorker();
+    return new EditorWorker();
   },
-}
+};
 
 const DEFAULT_CODE = `ideal
 model small
@@ -47,129 +47,134 @@ start:
 
     mov ax, 4C00h
     int 21h
-end start`
+end start`;
 
-const code = ref(DEFAULT_CODE)
-const isRunning = ref(false)
-const error = ref('')
-const showDos = ref(true)
-const themeStore = useThemeStore()
-const locale = useLocaleStore()
+const code = ref(DEFAULT_CODE);
+const isRunning = ref(false);
+const error = ref("");
+const showDos = ref(true);
+const themeStore = useThemeStore();
+const locale = useLocaleStore();
 
-const editorContainer = ref<HTMLDivElement | null>(null)
-const dosContainer = ref<HTMLDivElement | null>(null)
-let editor: monaco.editor.IStandaloneCodeEditor | null = null
-let dosProps: { stop: () => Promise<void> } | null = null
+const editorContainer = ref<HTMLDivElement | null>(null);
+const dosContainer = ref<HTMLDivElement | null>(null);
+let editor: monaco.editor.IStandaloneCodeEditor | null = null;
+let dosProps: { stop: () => Promise<void> } | null = null;
 
 onMounted(() => {
-  registerAssemblyLanguage(monaco)
-  registerMonacoThemes(monaco)
+  registerAssemblyLanguage(monaco);
+  registerMonacoThemes(monaco);
 
-  const link = document.createElement('link')
-  link.rel = 'stylesheet'
-  link.href = '/js-dos.css'
-  document.head.appendChild(link)
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "/js-dos.css";
+  document.head.appendChild(link);
 
   if (editorContainer.value) {
     editor = monaco.editor.create(editorContainer.value, {
       value: code.value,
-      language: 'x86asm',
+      language: "x86asm",
       theme: themeStore.theme,
       automaticLayout: true,
       minimap: { enabled: false },
       fontSize: 14,
       fontFamily: "'JetBrains Mono', 'Courier New', monospace",
       scrollBeyondLastLine: false,
-      renderLineHighlight: 'line',
-      lineNumbers: 'on',
+      renderLineHighlight: "line",
+      lineNumbers: "on",
       tabSize: 2,
-    })
+    });
 
     editor.onDidChangeModelContent(() => {
-      code.value = editor!.getValue()
-    })
-
-
+      code.value = editor!.getValue();
+    });
   }
-})
+});
 
 onUnmounted(() => {
-  editor?.dispose()
-  dosProps?.stop().catch(() => {})
-})
+  editor?.dispose();
+  dosProps?.stop().catch(() => {});
+});
 
 watch(themeStore, () => {
   if (editor) {
-    monaco.editor.setTheme(themeStore.theme)
+    monaco.editor.setTheme(themeStore.theme);
   }
-})
+});
 
 function base64ToUint8Array(base64: string): Uint8Array {
-  const binary = atob(base64)
-  const bytes = new Uint8Array(binary.length)
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i)
+    bytes[i] = binary.charCodeAt(i);
   }
-  return bytes
+  return bytes;
 }
 
 async function run() {
-  if (!dosContainer.value) return
+  if (!dosContainer.value) return;
 
-  isRunning.value = true
-  error.value = ''
+  isRunning.value = true;
+  error.value = "";
 
   try {
-    const res = await compileAndRun(code.value)
+    const res = await compileAndRun(code.value);
     if (!res.success || !res.exeBase64) {
-      error.value = res.error || 'Compilation failed'
-      return
+      error.value = res.error || "Compilation failed";
+      return;
     }
 
-    const exeBytes = base64ToUint8Array(res.exeBase64)
+    const exeBytes = base64ToUint8Array(res.exeBase64);
 
     if (dosProps) {
-      await dosProps.stop()
-      dosProps = null
+      await dosProps.stop();
+      dosProps = null;
     }
 
-    dosContainer.value.innerHTML = ''
+    dosContainer.value.innerHTML = "";
 
-    await import('js-dos/dist/js-dos.js')
-    const Dos = (window as unknown as { Dos: (el: HTMLElement, opts: Record<string, unknown>) => unknown }).Dos
+    await import("js-dos/dist/js-dos.js");
+    const Dos = (
+      window as unknown as { Dos: (el: HTMLElement, opts: Record<string, unknown>) => unknown }
+    ).Dos;
 
     dosProps = Dos(dosContainer.value, {
       dosboxConf: `[autoexec]\n@echo off\ncls\nmount c .\nc:\nprogram.exe\n`,
-      initFs: [{ path: 'program.exe', contents: exeBytes }],
-      pathPrefix: '/emulators/',
+      initFs: [{ path: "program.exe", contents: exeBytes }],
+      pathPrefix: "/emulators/",
       autoStart: true,
       noCursor: false,
       kiosk: true,
-      theme: themeStore.theme === 'one-dark' || themeStore.theme.endsWith('-dark') || themeStore.theme.endsWith('-mirage') || themeStore.theme === 'dracula' || themeStore.theme === 'nord'
-        ? 'dark'
-        : 'light',
-      backend: 'dosbox',
+      theme:
+        themeStore.theme === "one-dark" ||
+        themeStore.theme.endsWith("-dark") ||
+        themeStore.theme.endsWith("-mirage") ||
+        themeStore.theme === "dracula" ||
+        themeStore.theme === "nord"
+          ? "dark"
+          : "light",
+      backend: "dosbox",
       backendLocked: true,
       workerThread: true,
-    })
+    });
   } catch (err) {
-    error.value = `Error: ${err instanceof Error ? err.message : 'Unknown error'}`
+    error.value = `Error: ${err instanceof Error ? err.message : "Unknown error"}`;
   } finally {
-    isRunning.value = false
+    isRunning.value = false;
   }
 }
 
 function reset() {
-  code.value = DEFAULT_CODE
-  editor?.setValue(DEFAULT_CODE)
-  error.value = ''
+  code.value = DEFAULT_CODE;
+  editor?.setValue(DEFAULT_CODE);
+  error.value = "";
 }
 
 function toggleDos() {
-  showDos.value = !showDos.value
+  showDos.value = !showDos.value;
   if (!showDos.value && dosProps) {
-    dosProps.stop().catch(() => {})
-    dosProps = null
+    dosProps.stop().catch(() => {});
+    dosProps = null;
   }
 }
 </script>
@@ -177,14 +182,18 @@ function toggleDos() {
 <template>
   <div class="playground">
     <div class="toolbar">
-      <h2 class="title">{{ locale.t('nav.playground') }}</h2>
+      <h2 class="title">{{ locale.t("playground.title") }}</h2>
       <div class="toolbar-actions">
         <button @click="run" :disabled="isRunning" class="btn btn-run">
-          {{ isRunning ? locale.t('exercise.code.running') : '▶ ' + locale.t('exercise.code.run') }}
+          {{ isRunning ? locale.t("exercise.code.running") : "▶ " + locale.t("exercise.code.run") }}
         </button>
-        <button @click="reset" class="btn btn-reset">{{ locale.t('exercise.code.reset') }}</button>
-        <button @click="toggleDos" class="btn btn-dos-toggle" :title="showDos ? 'Hide DOSBox' : 'Show DOSBox'">
-          {{ showDos ? '⊟' : '⊞' }}
+        <button @click="reset" class="btn btn-reset">{{ locale.t("exercise.code.reset") }}</button>
+        <button
+          @click="toggleDos"
+          class="btn btn-dos-toggle"
+          :title="showDos ? 'Hide DOSBox' : 'Show DOSBox'"
+        >
+          {{ showDos ? "⊟" : "⊞" }}
         </button>
       </div>
     </div>
@@ -239,7 +248,9 @@ function toggleDos() {
   font-size: 0.85rem;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .btn-run {
