@@ -23,7 +23,10 @@ self.MonacoEnvironment = {
   },
 };
 
-const DEFAULT_CODE = `ideal
+const EXAMPLES = [
+  {
+    name: "Hello Tasm!",
+    code: `ideal
 model small
 stack 100h
 
@@ -47,9 +50,154 @@ start:
 
     mov ax, 4C00h
     int 21h
-end start`;
+end start`,
+  },
+  {
+    name: "Simple Sum",
+    code: `ideal
+model small
+stack 100h
 
-const code = ref(DEFAULT_CODE);
+codeseg
+start:
+    mov al, 5
+    mov bl, 3
+    add al, bl
+    add al, '0'
+
+    mov ah, 02h
+    mov dl, al
+    int 21h
+
+    mov dl, 13
+    int 21h
+    mov dl, 10
+    int 21h
+
+    mov ax, 4C00h
+    int 21h
+end start`,
+  },
+  {
+    name: "Spectacular Spider-Man",
+    code: `ideal
+model small
+stack 100h
+
+dataseg
+spec db 'Spectacular ', 0
+spid db 'Spider-Man!', 13, 10, 0
+
+codeseg
+proc aputs  ; PROCEDIMIENTO QUE IMPRIME UNA CADENA DE CARACTERES
+    push ax
+    push bx
+
+    mov ah, 0Eh
+    mov bh, 0
+
+    cld
+
+@@while:
+    lodsb
+    cmp al, 0
+    je @@endwhi
+
+    int 10h
+    jmp @@while
+
+@@endwhi:
+    pop bx
+    pop ax
+    ret
+
+endp aputs
+
+proc getp
+    push bx
+    push cx
+
+    mov ah, 03h
+    int 10h
+
+    pop cx
+    pop bx
+    ret
+endp getp
+
+proc asetp
+    push bx
+    push ax
+    mov bh, 0
+    mov ah, 2
+    int 10h
+    pop ax
+    pop bx
+    ret
+endp asetp
+
+proc aputsc
+    push ax
+    push bx
+    push cx
+
+    cld
+
+@@while:
+    lodsb
+    cmp al, 0
+    je @@endwhi
+
+    cmp al, 13
+    je @@ctrl
+    cmp al, 10
+    je @@ctrl
+
+    jmp @@print
+
+@@ctrl:
+    mov ah, 0Eh
+    mov bh, 0
+    int 10h
+    jmp @@while
+
+@@print:
+    mov ah, 09h
+    mov bh, 0
+    mov cx, 1
+    int 10h
+    call getp
+    inc dl
+    call asetp
+    jmp @@while
+
+@@endwhi:
+    pop cx
+    pop bx
+    pop ax
+    ret
+
+endp aputsc
+
+start:
+    mov ax, @data
+    mov ds, ax
+
+    mov bl, 9
+    mov si, offset spec
+    call aputsc
+    mov bl, 12
+    mov si, offset spid
+    call aputsc
+
+    mov ax, 4C00h
+    int 21h
+end start`,
+  },
+]
+
+const code = ref(EXAMPLES[0].code)
+const selectedExample = ref(0)
 const isRunning = ref(false);
 const error = ref("");
 const showDos = ref(true);
@@ -172,10 +320,15 @@ async function run() {
   }
 }
 
+function loadExample(index: number) {
+  selectedExample.value = index
+  code.value = EXAMPLES[index].code
+  editor?.setValue(EXAMPLES[index].code)
+  error.value = ''
+}
+
 function reset() {
-  code.value = DEFAULT_CODE;
-  editor?.setValue(DEFAULT_CODE);
-  error.value = "";
+  loadExample(0)
 }
 
 function toggleDos() {
@@ -191,6 +344,9 @@ function toggleDos() {
   <div class="playground">
     <div class="toolbar">
       <h2 class="title">{{ locale.t("playground.title") }}</h2>
+      <select v-model="selectedExample" @change="loadExample(selectedExample)" class="example-select">
+        <option v-for="(ex, i) in EXAMPLES" :key="i" :value="i">{{ ex.name }}</option>
+      </select>
       <div class="toolbar-actions">
         <button @click="run" :disabled="isRunning" class="btn btn-run">
           {{ isRunning ? locale.t("exercise.code.running") : "▶ " + locale.t("exercise.code.run") }}
@@ -295,6 +451,22 @@ function toggleDos() {
 }
 .btn-dos-toggle:hover {
   background: var(--color-border-hover);
+}
+
+.example-select {
+  background: var(--color-bg-soft);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  max-width: 200px;
+}
+.example-select:focus {
+  outline: none;
+  border-color: var(--color-theme-accent);
 }
 
 .panels {
