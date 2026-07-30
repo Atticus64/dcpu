@@ -196,7 +196,7 @@ end start`,
   },
 ]
 
-const code = ref(EXAMPLES[0].code)
+const code = ref(EXAMPLES[0]!.code)
 const selectedExample = ref(0)
 const isRunning = ref(false);
 const error = ref("");
@@ -291,7 +291,7 @@ async function run() {
 
     await import("js-dos/dist/js-dos.js");
     const Dos = (
-      window as unknown as { Dos: (el: HTMLElement, opts: Record<string, unknown>) => unknown }
+      window as unknown as { Dos: (el: HTMLElement, opts: Record<string, unknown>) => { stop: () => Promise<void> } }
     ).Dos;
 
     dosProps = Dos(dosContainer.value, {
@@ -322,8 +322,9 @@ async function run() {
 
 function loadExample(index: number) {
   selectedExample.value = index
-  code.value = EXAMPLES[index].code
-  editor?.setValue(EXAMPLES[index].code)
+  const ex = EXAMPLES[index]!
+  code.value = ex.code
+  editor?.setValue(ex.code)
   error.value = ''
 }
 

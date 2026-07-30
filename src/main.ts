@@ -15,4 +15,9 @@ app.use(router)
 const themeStore = useThemeStore()
 themeStore.init()
 
+const link = document.createElement('link')
+link.rel = 'stylesheet'
+link.href = 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap'
+document.head.appendChild(link)
+
 app.mount('#app')

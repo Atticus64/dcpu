@@ -1,28 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import * as monaco from 'monaco-editor'
-import { registerMonacoThemes } from '@/utils/monaco-themes'
-import { registerAssemblyLanguage } from '@/utils/monaco-languages'
 import type { CodeExercise } from '@/types'
 import { compileCode } from '@/api/compiler'
 import { useThemeStore } from '@/stores/theme'
 import { useLocaleStore } from '@/stores/locale'
 
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-
-self.MonacoEnvironment = {
-  getWorker(_, label) {
-    if (label === 'json') return new JsonWorker()
-    if (label === 'css' || label === 'scss' || label === 'less') return new CssWorker()
-    if (label === 'html' || label === 'handlebars' || label === 'razor') return new HtmlWorker()
-    if (label === 'typescript' || label === 'javascript') return new TsWorker()
-    return new EditorWorker()
-  },
-}
+type Monaco = typeof import('monaco-editor')
 
 const props = defineProps<{ exercise: CodeExercise }>()
 const emit = defineEmits<{ complete: [id: string, passed: boolean] }>()
@@ -35,13 +18,35 @@ const submitted = ref(false)
 const passed = ref(false)
 
 const editorContainer = ref<HTMLDivElement | null>(null)
-let editor: monaco.editor.IStandaloneCodeEditor | null = null
+let editor: import('monaco-editor').editor.IStandaloneCodeEditor | null = null
+let monacoModule: Monaco | null = null
 
 const themeStore = useThemeStore()
 
 const languageId = props.exercise.language === 'c' ? 'c' : 'x86asm'
 
-onMounted(() => {
+onMounted(async () => {
+  const EditorWorker = (await import('monaco-editor/esm/vs/editor/editor.worker?worker')).default
+  const TsWorker = (await import('monaco-editor/esm/vs/language/typescript/ts.worker?worker')).default
+  const JsonWorker = (await import('monaco-editor/esm/vs/language/json/json.worker?worker')).default
+  const CssWorker = (await import('monaco-editor/esm/vs/language/css/css.worker?worker')).default
+  const HtmlWorker = (await import('monaco-editor/esm/vs/language/html/html.worker?worker')).default
+
+  self.MonacoEnvironment = {
+    getWorker(_, label) {
+      if (label === 'json') return new JsonWorker()
+      if (label === 'css' || label === 'scss' || label === 'less') return new CssWorker()
+      if (label === 'html' || label === 'handlebars' || label === 'razor') return new HtmlWorker()
+      if (label === 'typescript' || label === 'javascript') return new TsWorker()
+      return new EditorWorker()
+    },
+  }
+
+  const monaco = await import('monaco-editor')
+  monacoModule = monaco
+
+  const { registerAssemblyLanguage } = await import('@/utils/monaco-languages')
+  const { registerMonacoThemes } = await import('@/utils/monaco-themes')
   registerAssemblyLanguage(monaco)
   registerMonacoThemes(monaco)
 
@@ -72,8 +77,8 @@ onUnmounted(() => {
 })
 
 watch(themeStore, () => {
-  if (editor) {
-    monaco.editor.setTheme(themeStore.theme)
+  if (editor && monacoModule) {
+    monacoModule.editor.setTheme(themeStore.theme)
   }
 })
 
