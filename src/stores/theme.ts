@@ -9,18 +9,20 @@ export interface ThemeInfo {
 }
 
 const THEMES: ThemeInfo[] = [
-  { id: 'one-dark',        name: 'One Dark',        type: 'dark',  gradient: 'linear-gradient(135deg, #282c34, #61afef)' },
+  { id: 'one-dark',        name: 'One Dark',           type: 'dark',  gradient: 'linear-gradient(135deg, #282c34, #61afef)' },
   { id: 'catppuccin-latte',  name: 'Catppuccin Latte', type: 'light', gradient: 'linear-gradient(135deg, #eff1f5, #8839ef)' },
   { id: 'catppuccin-mocha',  name: 'Catppuccin Mocha', type: 'dark',  gradient: 'linear-gradient(135deg, #1e1e2e, #cba6f7)' },
-  { id: 'nord',             name: 'Nord',             type: 'dark',  gradient: 'linear-gradient(135deg, #2e3440, #88c0d0)' },
-  { id: 'github-light',     name: 'GitHub Light',    type: 'light', gradient: 'linear-gradient(135deg, #ffffff, #0969da)' },
-  { id: 'github-dark',      name: 'GitHub Dark',     type: 'dark',  gradient: 'linear-gradient(135deg, #0d1117, #58a6ff)' },
-  { id: 'dracula',          name: 'Dracula',          type: 'dark',  gradient: 'linear-gradient(135deg, #282a36, #bd93f9)' },
-  { id: 'tokyo-night',      name: 'Tokyo Night',      type: 'dark',  gradient: 'linear-gradient(135deg, #1a1b26, #7aa2f7)' },
-  { id: 'gruvbox-dark',     name: 'Gruvbox Dark',    type: 'dark',  gradient: 'linear-gradient(135deg, #282828, #fe8019)' },
-  { id: 'solarized-dark',   name: 'Solarized Dark',  type: 'dark',  gradient: 'linear-gradient(135deg, #002b36, #268bd2)' },
-  { id: 'material-dark',    name: 'Material Dark',   type: 'dark',  gradient: 'linear-gradient(135deg, #263238, #82b1ff)' },
-  { id: 'ayu-mirage',       name: 'Ayu Mirage',      type: 'dark',  gradient: 'linear-gradient(135deg, #1f2430, #73d0ff)' },
+  { id: 'nord',             name: 'Nord',              type: 'dark',  gradient: 'linear-gradient(135deg, #2e3440, #88c0d0)' },
+  { id: 'kanagawa-wave',         name: 'Kanagawa',          type: 'dark',  gradient: 'linear-gradient(135deg, #DCD7BA, #1F1F28)' },
+  { id: 'night-owl',         name: 'Night Owl',          type: 'dark',  gradient: 'linear-gradient(135deg, #ACD7BB, #2F1F28)' },
+  { id: 'github-light',     name: 'GitHub Light',      type: 'light', gradient: 'linear-gradient(135deg, #ffffff, #0969da)' },
+  { id: 'github-dark',      name: 'GitHub Dark',       type: 'dark',  gradient: 'linear-gradient(135deg, #0d1117, #58a6ff)' },
+  { id: 'dracula',          name: 'Dracula',           type: 'dark',  gradient: 'linear-gradient(135deg, #282a36, #bd93f9)' },
+  { id: 'tokyo-night',      name: 'Tokyo Night',       type: 'dark',  gradient: 'linear-gradient(135deg, #1a1b26, #7aa2f7)' },
+  { id: 'gruvbox-dark',     name: 'Gruvbox Dark',      type: 'dark',  gradient: 'linear-gradient(135deg, #282828, #fe8019)' },
+  { id: 'solarized-dark',   name: 'Solarized Dark',    type: 'dark',  gradient: 'linear-gradient(135deg, #002b36, #268bd2)' },
+  { id: 'material-dark',    name: 'Material Dark',     type: 'dark',  gradient: 'linear-gradient(135deg, #263238, #82b1ff)' },
+  { id: 'ayu-mirage',       name: 'Ayu Mirage',        type: 'dark',  gradient: 'linear-gradient(135deg, #1f2430, #73d0ff)' },
 ]
 
 const DEFAULT_THEME = 'one-dark'

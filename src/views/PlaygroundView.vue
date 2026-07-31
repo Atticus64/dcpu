@@ -254,6 +254,54 @@ int main() {
     printf("%s tendra %d \\n", pedro.name, n_edad);
     return 0;
 }`
+  },
+  {
+    name: "Loop for square",
+    code: `#include <stdio.h>
+
+void ciclo1(int ancho) {
+	for (int j = 0; j < ancho; j++) {
+		printf("*");
+	}
+	printf("\\n");
+}
+
+void ciclo2(int ancho) {
+	printf("*");
+	for (int k = 0; k < ancho - 2; k++) {
+		printf(" ");
+	}
+	printf("*");
+	printf("\\n");
+}
+
+void imprimir_cuadrado(int ancho, int largo) {
+  for (int i = 0; i < largo; i++) {
+     if (i == 0 || i == largo - 1) {
+       ciclo1(ancho);
+     } else {
+       ciclo2(ancho);
+     }
+  }
+}
+
+int main() {
+  int ancho = 0, largo = 0;
+
+  printf("Ingresa el ancho: ");
+  fflush(stdout);
+	scanf("%d", &ancho);
+  printf("Ingresa el largo: ");
+  fflush(stdout);
+	scanf("%d", &largo);
+    // ********** 10 x 3
+    // *        *
+    // **********
+	imprimir_cuadrado(ancho, largo);
+
+	return 0;
+}
+`
   }
 ]
 
@@ -320,6 +368,121 @@ onMounted(() => {
   selectedCExample.value = persisted.cIndex;
   selectedExample.value = language.value === "c" ? persisted.cIndex : persisted.asmIndex;
   code.value = currentExamples()[selectedExample.value]!.code;
+
+  monaco.editor.defineTheme('night-owl',
+  {
+  "base": "vs-dark",
+  "inherit": true,
+  "rules": [
+    {
+      "background": "011627",
+      "token": ""
+    },
+    {
+      "foreground": "637777",
+      "token": "comment"
+    },
+    {
+      "foreground": "addb67",
+      "token": "string"
+    },
+    {
+      "foreground": "ecc48d",
+      "token": "vstring.quoted"
+    },
+    {
+      "foreground": "ecc48d",
+      "token": "variable.other.readwrite.js"
+    },
+    {
+      "foreground": "5ca7e4",
+      "token": "string.regexp"
+    },
+    {
+      "foreground": "5ca7e4",
+      "token": "string.regexp keyword.other"
+    },
+    {
+      "foreground": "5f7e97",
+      "token": "meta.function punctuation.separator.comma"
+    },
+    {
+      "foreground": "f78c6c",
+      "token": "constant.numeric"
+    },
+    {
+      "foreground": "f78c6c",
+      "token": "constant.character.numeric"
+    },
+    {
+      "foreground": "addb67",
+      "token": "variable"
+    },
+    {
+      "foreground": "c792ea",
+      "token": "keyword"
+    },
+    {
+      "foreground": "c792ea",
+      "token": "punctuation.accessor"
+    },
+    {
+      "foreground": "ffcb8b",
+      "token": "entity.name.class"
+    },
+    {
+      "foreground": "ffcb8b",
+      "token": "meta.class entity.name.type.class"
+    },
+    {
+      "foreground": "addb67",
+      "token": "entity.other.inherited-class"
+    },
+    {
+      "foreground": "82aaff",
+      "token": "entity.name.function"
+    },
+  ],
+  "colors": {
+    "editor.foreground": "#d6deeb",
+    "editor.background": "#011627",
+    "editor.selectionBackground": "#5f7e9779",
+    "editor.lineHighlightBackground": "#010E17",
+    "editorCursor.foreground": "#80a4c2",
+    "editorWhitespace.foreground": "#2e2040",
+    "editorIndentGuide.background": "#5e81ce52",
+    "editor.selectionHighlightBorder": "#122d42"
+  }
+}
+  );
+
+  monaco.editor.defineTheme('kanagawa-wave', {
+    base: 'vs-dark', // Inherit base rules from VS Dark
+    inherit: true,
+    rules: [
+      { token: '', foreground: '#DCD7BA', background: '#1F1F28' },
+      { token: 'comment', foreground: '#727169', fontStyle: 'italic' },
+      { token: 'keyword', foreground: '#957FB8', fontStyle: 'bold' },
+      { token: 'number', foreground: '#D27E99' },
+      { token: 'string', foreground: '#98BB6C' },
+      { token: 'variable', foreground: '#E6C384' },
+      { token: 'type', foreground: '#7AA89F' },
+      { token: 'function', foreground: '#7E9CD8' },
+      { token: 'delimiter', foreground: '#9CACA6' },
+      { token: 'tag', foreground: '#E46876' },
+    ],
+    colors: {
+      'editor.background': '#1F1F28',        // Main background (Sumire Iro)
+      'editor.foreground': '#DCD7BA',        // Default text (Fuji White)
+      'editorCursor.foreground': '#C8C093',  // Cursor color
+      'editor.lineHighlightBackground': '#2A2A37', // Current line highlight
+      'editorLineNumber.foreground': '#54546D',    // Line numbers
+      'editorLineNumber.activeForeground': '#FF9E3B', // Active line number
+      'editor.selectionBackground': '#2D4F67',     // Text selection background
+      'editor.inactiveSelectionBackground': '#223249'
+    }
+  });
+
 
   registerAssemblyLanguage(monaco);
   registerMonacoThemes(monaco);
