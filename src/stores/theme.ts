@@ -15,6 +15,7 @@ const THEMES: ThemeInfo[] = [
   { id: 'nord',             name: 'Nord',              type: 'dark',  gradient: 'linear-gradient(135deg, #2e3440, #88c0d0)' },
   { id: 'kanagawa-wave',         name: 'Kanagawa',          type: 'dark',  gradient: 'linear-gradient(135deg, #DCD7BA, #1F1F28)' },
   { id: 'night-owl',         name: 'Night Owl',          type: 'dark',  gradient: 'linear-gradient(135deg, #ACD7BB, #2F1F28)' },
+  { id: 'rose-pine',         name: 'Rosé Pine',          type: 'dark',  gradient: 'linear-gradient(135deg, #191724, #c4a7e7)' },
   { id: 'github-light',     name: 'GitHub Light',      type: 'light', gradient: 'linear-gradient(135deg, #ffffff, #0969da)' },
   { id: 'github-dark',      name: 'GitHub Dark',       type: 'dark',  gradient: 'linear-gradient(135deg, #0d1117, #58a6ff)' },
   { id: 'dracula',          name: 'Dracula',           type: 'dark',  gradient: 'linear-gradient(135deg, #282a36, #bd93f9)' },

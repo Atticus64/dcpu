@@ -56,6 +56,11 @@ onMounted(() => {
 function goToLessons() {
   router.push('/lessons')
 }
+
+function goToPlayground() {
+  router.push('/playground')
+}
+
 </script>
 
 <template>
@@ -70,6 +75,10 @@ function goToLessons() {
         <button class="cta" @click="goToLessons">
           <span>{{ locale.t('landing.startButton') }}</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+        <button class="cta ctb" @click="goToPlayground">
+          <span>{{ locale.t('landing.playButton') }}</span>
+          ☕
         </button>
       </div>
     </section>
@@ -237,11 +246,11 @@ h1 {
   transform: translateY(0);
   opacity: 0.8;
 }
-
 .cta {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  margin: .4rem;
   padding: 0.85rem 2rem;
   background: var(--color-theme-accent);
   color: #fff;
@@ -255,6 +264,11 @@ h1 {
   opacity: 0;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s, opacity 0.6s ease 0.3s, box-shadow 0.2s, filter 0.2s;
 }
+
+.ctb {
+  background: var(--color-error-text);
+}
+
 .visible .cta {
   transform: translateY(0);
   opacity: 1;
@@ -263,6 +277,12 @@ h1 {
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 8px 30px color-mix(in srgb, var(--color-theme-accent) 40%, transparent);
 }
+
+.ctb:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--color-error-text) 40%, transparent);
+}
+
 .cta:active {
   transform: scale(0.97);
 }

@@ -17,6 +17,7 @@ export const en: Record<string, string> = {
   "landing.subtitle":
     "A hands-on course in x86 assembly (Turbo Assembler IDEAL mode) and C programming. Write real code with real-time feedback in your browser.",
   "landing.startButton": "Start Learning",
+  "landing.playButton": "Try Playground",
   "landing.feature.compiler.title": "In-Browser Compiler",
   "landing.feature.compiler.desc": "Write, compile, and run x86 assembly directly in your browser with Turbo Assembler (IDEAL mode).",
   "landing.feature.dosbox.title": "Built-in DOSBox",

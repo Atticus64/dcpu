@@ -333,3 +333,27 @@
   --color-theme-accent: #ff9e3b;
   --color-theme-gradient: linear-gradient(135deg, #dcd7ba, #1f1f28);
 }
+
+/* ===== Rosé Pine ===== */
+[data-theme="rose-pine"] {
+  --color-bg: #191724;
+  --color-bg-soft: #1f1d2e;
+  --color-bg-mute: #26233a;
+  --color-text: #e0def4;
+  --color-heading: #c4a7e7;
+  --color-border: #26233a;
+  --color-border-hover: #403d52;
+  --color-success-bg: #9ccfd822;
+  --color-success-border: #9ccfd8;
+  --color-success-text: #9ccfd8;
+  --color-error-bg: #eb6f9222;
+  --color-error-border: #eb6f92;
+  --color-error-text: #eb6f92;
+  --color-code-bg: #1f1d2e;
+  --color-code-text: #e0def4;
+  --color-output-bg: #1f1d2e;
+  --color-output-text: #e0def4;
+  --color-output-error: #eb6f92;
+  --color-theme-accent: #ebbcba;
+  --color-theme-gradient: linear-gradient(135deg, #191724, #c4a7e7);
+}

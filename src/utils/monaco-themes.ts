@@ -204,6 +204,12 @@ export const monacoThemes: Record<string, monaco.editor.IStandaloneThemeData> = 
       'editor.inactiveSelectionBackground': '#223249',
     },
   },
+  'rose-pine': makeTheme(
+    'vs-dark',
+    '#191724', '#e0def4', '#ebbcba', '#403d52', '#1f1d2e',
+    '#191724', '#6e6a86', '#e0def4',
+    '#6e6a86', '#eb6f92', '#f6c177', '#f6c177', '#9ccfd8', '#c4a7e7', '#ebbcba', '#9ccfd8',
+  ),
 }
 
 export function registerMonacoThemes(monaco: typeof import('monaco-editor')) {
