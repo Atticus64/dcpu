@@ -41,6 +41,9 @@ deno task dev            # http://localhost:3001
 | GET | `/api/health` | Health check |
 | POST | `/api/compile` | Compile code |
 | POST | `/api/compile` body | `{ code: string, language: "assembly" \| "c" }` |
+| WS | `/api/compile/c/ws` | Live C session (compile + run with streaming stdin/stdout) |
+
+The Playground runs assembly programs in DOSBox (js-dos). For **C** it opens a live terminal session: the backend compiles with TCC and executes the program with a piped stdin, streaming stdout over a WebSocket — so `printf` output and `scanf` input both work. Messages: client sends `{ type: "compile", code }` and `{ type: "input", data }`; server replies `{ type: "ready" }`, `{ type: "output", stream, data }`, `{ type: "exit", code }`, `{ type: "error", message }`.
 
 ### Project Structure
 
@@ -124,6 +127,9 @@ deno task dev            # http://localhost:3001
 | GET | `/api/health` | Verificar estado |
 | POST | `/api/compile` | Compilar código |
 | POST | `/api/compile` body | `{ code: string, language: "assembly" \| "c" }` |
+| WS | `/api/compile/c/ws` | Sesión C en vivo (compilar + ejecutar con stdin/stdout en streaming) |
+
+El Playground ejecuta programas assembly en DOSBox (js-dos). Para **C** abre una sesión de terminal en vivo: el backend compila con TCC y ejecuta el programa con stdin pipeado, transmitiendo stdout por WebSocket — así funcionan tanto `printf` como `scanf`. Mensajes: el cliente envía `{ type: "compile", code }` y `{ type: "input", data }`; el servidor responde `{ type: "ready" }`, `{ type: "output", stream, data }`, `{ type: "exit", code }`, `{ type: "error", message }`.
 
 ### Estructura del Proyecto
 
