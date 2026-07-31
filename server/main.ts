@@ -1,10 +1,12 @@
 import { Application, Router } from "@oak/oak";
 import { compileRouter } from "./routes/compile.ts";
+import { cSessionRouter } from "./routes/c-session.ts";
 import { log } from "./lib/logger.ts";
 
 const router = new Router();
 
 router.use("/api/compile", compileRouter.routes(), compileRouter.allowedMethods());
+router.use("/api/compile/c", cSessionRouter.routes(), cSessionRouter.allowedMethods());
 
 router.get("/api/health", (ctx) => {
   ctx.response.body = { status: "ok" };
