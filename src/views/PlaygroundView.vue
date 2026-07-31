@@ -6,6 +6,9 @@ import { registerAssemblyLanguage } from "@/utils/monaco-languages";
 import { useThemeStore } from "@/stores/theme";
 import { useLocaleStore } from "@/stores/locale";
 import { compileAndRun } from "@/api/compiler";
+import CTerminal from "@/components/playground/CTerminal.vue";
+
+type PlaygroundLanguage = "assembly" | "c";
 
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
@@ -23,7 +26,7 @@ self.MonacoEnvironment = {
   },
 };
 
-const EXAMPLES = [
+const ASM_EXAMPLES = [
   {
     name: "Hello Tasm!",
     code: `ideal
@@ -196,13 +199,54 @@ end start`,
   },
 ]
 
-const code = ref(EXAMPLES[0]!.code)
+const C_EXAMPLES = [
+  {
+    name: "Hello C!",
+    code: `#include <stdio.h>
+
+int main() {
+    printf("Hello C!\\n");
+    return 0;
+}`,
+  },
+  {
+    name: "Simple Sum",
+    code: `#include <stdio.h>
+
+int main() {
+    int a = 5;
+    int b = 3;
+    printf("%d\\n", a + b);
+    return 0;
+}`,
+  },
+  {
+    name: "Read a Number",
+    code: `#include <stdio.h>
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    fflush(stdout);
+    scanf("%d", &n);
+    printf("\\n%d * 2 => %d\\n", n, n * 2);
+    return 0;
+}`,
+  },
+]
+
+const code = ref(ASM_EXAMPLES[0]!.code)
 const selectedExample = ref(0)
+const selectedAsmExample = ref(0)
+const selectedCExample = ref(0)
+const language = ref<PlaygroundLanguage>("assembly")
 const isRunning = ref(false);
 const error = ref("");
 const showDos = ref(true);
 const themeStore = useThemeStore();
 const locale = useLocaleStore();
+
+const cTerminal = ref<InstanceType<typeof CTerminal> | null>(null)
 
 const editorContainer = ref<HTMLDivElement | null>(null);
 const dosContainer = ref<HTMLDivElement | null>(null);
@@ -221,7 +265,7 @@ onMounted(() => {
   if (editorContainer.value) {
     editor = monaco.editor.create(editorContainer.value, {
       value: code.value,
-      language: "x86asm",
+      language: editorLanguage(),
       theme: themeStore.theme,
       automaticLayout: true,
       minimap: { enabled: false },
@@ -248,6 +292,7 @@ onMounted(() => {
 onUnmounted(() => {
   editor?.dispose();
   dosProps?.stop().catch(() => {});
+  cTerminal.value?.stop();
 });
 
 watch(themeStore, () => {
@@ -266,6 +311,14 @@ function base64ToUint8Array(base64: string): Uint8Array {
 }
 
 async function run() {
+  if (language.value === "c") {
+    cTerminal.value?.start(code.value);
+    return;
+  }
+  runAssembly();
+}
+
+async function runAssembly() {
   if (!dosContainer.value) return;
 
   if (!showDos.value) showDos.value = true;
@@ -320,12 +373,47 @@ async function run() {
   }
 }
 
+function currentExamples() {
+  return language.value === "c" ? C_EXAMPLES : ASM_EXAMPLES;
+}
+
 function loadExample(index: number) {
+  if (language.value === "c") {
+    selectedCExample.value = index;
+  } else {
+    selectedAsmExample.value = index;
+  }
   selectedExample.value = index
-  const ex = EXAMPLES[index]!
+  const ex = currentExamples()[index]!
   code.value = ex.code
   editor?.setValue(ex.code)
   error.value = ''
+}
+
+function editorLanguage() {
+  return language.value === "c" ? "c" : "x86asm";
+}
+
+async function stopRunning() {
+  if (dosProps) {
+    await dosProps.stop().catch(() => {});
+    dosProps = null;
+  }
+  cTerminal.value?.stop();
+}
+
+async function switchLanguage(lang: PlaygroundLanguage) {
+  if (lang === language.value) return;
+  language.value = lang;
+  selectedExample.value = 0;
+  if (lang === "c") selectedCExample.value = 0;
+  else selectedAsmExample.value = 0;
+  if (editor) {
+    monaco.editor.setModelLanguage(editor.getModel()!, editorLanguage());
+  }
+  await stopRunning();
+  error.value = "";
+  loadExample(0);
 }
 
 function reset() {
@@ -345,8 +433,22 @@ function toggleDos() {
   <div class="playground">
     <div class="toolbar">
       <h2 class="title">{{ locale.t("playground.title") }}</h2>
+      <div class="lang-toggle">
+        <button
+          :class="['lang-btn', { active: language === 'assembly' }]"
+          @click="switchLanguage('assembly')"
+        >
+          {{ locale.t("playground.language.assembly") }}
+        </button>
+        <button
+          :class="['lang-btn', { active: language === 'c' }]"
+          @click="switchLanguage('c')"
+        >
+          {{ locale.t("playground.language.c") }}
+        </button>
+      </div>
       <select v-model="selectedExample" @change="loadExample(selectedExample)" class="example-select">
-        <option v-for="(ex, i) in EXAMPLES" :key="i" :value="i">{{ ex.name }}</option>
+        <option v-for="(ex, i) in currentExamples()" :key="i" :value="i">{{ ex.name }}</option>
       </select>
       <div class="toolbar-actions">
         <button @click="run" :disabled="isRunning" class="btn btn-run">
@@ -354,6 +456,7 @@ function toggleDos() {
         </button>
         <button @click="reset" class="btn btn-reset">{{ locale.t("exercise.code.reset") }}</button>
         <button
+          v-if="language === 'assembly'"
           @click="toggleDos"
           class="btn btn-dos-toggle"
           :title="showDos ? 'Hide DOSBox' : 'Show DOSBox'"
@@ -367,11 +470,14 @@ function toggleDos() {
       <div class="panel panel-editor">
         <div ref="editorContainer" class="monaco-editor-container" />
       </div>
-      <div class="panel panel-dos" v-show="showDos">
+      <div class="panel panel-dos" v-show="showDos && language === 'assembly'">
         <div ref="dosContainer" class="dos-output" />
         <div v-if="error" class="error-panel">
           <pre>{{ error }}</pre>
         </div>
+      </div>
+      <div class="panel panel-terminal" v-show="language === 'c'">
+        <CTerminal ref="cTerminal" />
       </div>
     </div>
   </div>
@@ -470,6 +576,37 @@ function toggleDos() {
   border-color: var(--color-theme-accent);
 }
 
+.lang-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.lang-btn {
+  padding: 0.35rem 0.9rem;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lang-btn:hover {
+  background: var(--color-border-hover);
+}
+
+.lang-btn.active {
+  background: var(--color-theme-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
 .panels {
   display: flex;
   gap: 1rem;
@@ -500,6 +637,18 @@ function toggleDos() {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+.panel-terminal {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.panel-terminal :deep(.c-terminal) {
+  height: 100%;
 }
 
 .dos-output {
