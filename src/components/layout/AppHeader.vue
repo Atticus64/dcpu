@@ -91,6 +91,16 @@ function closeMenu() {
   border-bottom: 1px solid var(--color-border);
   padding: 0 1.5rem;
 }
+.app-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-theme-gradient);
+  z-index: 1;
+}
 .header-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -122,8 +132,19 @@ function closeMenu() {
   background: var(--color-border-hover);
 }
 .desktop-nav a.active {
-  color: var(--color-heading);
+  color: var(--color-theme-accent);
   font-weight: 600;
+  position: relative;
+}
+.desktop-nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: -0.3rem;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-theme-gradient);
 }
 .desktop-pickers {
   display: flex;
@@ -203,7 +224,7 @@ function closeMenu() {
   background: var(--color-border-hover);
 }
 .mobile-nav a.active {
-  color: var(--color-heading);
+  color: var(--color-theme-accent);
   font-weight: 600;
   background: var(--color-background-mute);
 }

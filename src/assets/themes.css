@@ -19,6 +19,7 @@
   --color-output-text: #d4d4d4;
   --color-output-error: #f48771;
   --color-theme-accent: #61afef;
+  --color-theme-gradient: linear-gradient(135deg, #282c34, #61afef);
 }
 
 /* ===== Catppuccin Latte ===== */
@@ -42,6 +43,7 @@
   --color-output-text: #4c4f69;
   --color-output-error: #d20f39;
   --color-theme-accent: #8839ef;
+  --color-theme-gradient: linear-gradient(135deg, #eff1f5, #8839ef);
 }
 
 /* ===== Catppuccin Mocha ===== */
@@ -65,6 +67,7 @@
   --color-output-text: #cdd6f4;
   --color-output-error: #f38ba8;
   --color-theme-accent: #cba6f7;
+  --color-theme-gradient: linear-gradient(135deg, #1e1e2e, #cba6f7);
 }
 
 /* ===== Nord ===== */
@@ -88,6 +91,7 @@
   --color-output-text: #d8dee9;
   --color-output-error: #bf616a;
   --color-theme-accent: #88c0d0;
+  --color-theme-gradient: linear-gradient(135deg, #2e3440, #88c0d0);
 }
 
 /* ===== GitHub Light ===== */
@@ -111,6 +115,7 @@
   --color-output-text: #24292f;
   --color-output-error: #cf222e;
   --color-theme-accent: #0969da;
+  --color-theme-gradient: linear-gradient(135deg, #ffffff, #0969da);
 }
 
 /* ===== GitHub Dark ===== */
@@ -134,6 +139,7 @@
   --color-output-text: #c9d1d9;
   --color-output-error: #f85149;
   --color-theme-accent: #58a6ff;
+  --color-theme-gradient: linear-gradient(135deg, #0d1117, #58a6ff);
 }
 
 /* ===== Dracula ===== */
@@ -157,6 +163,7 @@
   --color-output-text: #f8f8f2;
   --color-output-error: #ff5555;
   --color-theme-accent: #bd93f9;
+  --color-theme-gradient: linear-gradient(135deg, #282a36, #bd93f9);
 }
 
 /* ===== Tokyo Night ===== */
@@ -180,6 +187,7 @@
   --color-output-text: #a9b1d6;
   --color-output-error: #f7768e;
   --color-theme-accent: #7aa2f7;
+  --color-theme-gradient: linear-gradient(135deg, #1a1b26, #7aa2f7);
 }
 
 /* ===== Gruvbox Dark ===== */
@@ -203,6 +211,7 @@
   --color-output-text: #ebdbb2;
   --color-output-error: #fb4934;
   --color-theme-accent: #fe8019;
+  --color-theme-gradient: linear-gradient(135deg, #282828, #fe8019);
 }
 
 /* ===== Solarized Dark ===== */
@@ -226,6 +235,7 @@
   --color-output-text: #839496;
   --color-output-error: #dc322f;
   --color-theme-accent: #268bd2;
+  --color-theme-gradient: linear-gradient(135deg, #002b36, #268bd2);
 }
 
 /* ===== Material Dark ===== */
@@ -249,6 +259,7 @@
   --color-output-text: #eeffff;
   --color-output-error: #ef9a9a;
   --color-theme-accent: #82b1ff;
+  --color-theme-gradient: linear-gradient(135deg, #263238, #82b1ff);
 }
 
 /* ===== Ayu Mirage ===== */
@@ -272,4 +283,53 @@
   --color-output-text: #cbccc6;
   --color-output-error: #f28779;
   --color-theme-accent: #73d0ff;
+  --color-theme-gradient: linear-gradient(135deg, #1f2430, #73d0ff);
+}
+
+/* ===== Night Owl ===== */
+[data-theme="night-owl"] {
+  --color-bg: #011627;
+  --color-bg-soft: #0b2942;
+  --color-bg-mute: #010e17;
+  --color-text: #d6deeb;
+  --color-heading: #ffcb8b;
+  --color-border: #1d3b53;
+  --color-border-hover: #2c4f6e;
+  --color-success-bg: #addb6722;
+  --color-success-border: #addb67;
+  --color-success-text: #addb67;
+  --color-error-bg: #f78c6c22;
+  --color-error-border: #f78c6c;
+  --color-error-text: #f78c6c;
+  --color-code-bg: #0b2942;
+  --color-code-text: #d6deeb;
+  --color-output-bg: #010e17;
+  --color-output-text: #d6deeb;
+  --color-output-error: #f78c6c;
+  --color-theme-accent: #82aaff;
+  --color-theme-gradient: linear-gradient(135deg, #acd7bb, #2f1f28);
+}
+
+/* ===== Kanagawa Wave ===== */
+[data-theme="kanagawa-wave"] {
+  --color-bg: #1f1f28;
+  --color-bg-soft: #2a2a37;
+  --color-bg-mute: #16161d;
+  --color-text: #dcd7ba;
+  --color-heading: #ff9e3b;
+  --color-border: #363646;
+  --color-border-hover: #54546d;
+  --color-success-bg: #98bb6c22;
+  --color-success-border: #98bb6c;
+  --color-success-text: #98bb6c;
+  --color-error-bg: #e4687622;
+  --color-error-border: #e46876;
+  --color-error-text: #e46876;
+  --color-code-bg: #2a2a37;
+  --color-code-text: #dcd7ba;
+  --color-output-bg: #16161d;
+  --color-output-text: #dcd7ba;
+  --color-output-error: #e46876;
+  --color-theme-accent: #ff9e3b;
+  --color-theme-gradient: linear-gradient(135deg, #dcd7ba, #1f1f28);
 }
