@@ -9,15 +9,20 @@ export const es: Record<string, string> = {
     "Un curso práctico de assembly x86 (modo IDEAL de Turbo Assembler) y programación en C. Escribe código real con retroalimentación en tiempo real en tu navegador.",
   "landing.startButton": "Empezar a Aprender",
   "landing.feature.compiler.title": "Compilador en el Navegador",
-  "landing.feature.compiler.desc": "Escribe, compila y ejecuta assembly x86 directamente en tu navegador con Turbo Assembler (modo IDEAL).",
+  "landing.feature.compiler.desc":
+    "Escribe, compila y ejecuta assembly x86 directamente en tu navegador con Turbo Assembler (modo IDEAL).",
   "landing.feature.dosbox.title": "DOSBox Integrado",
-  "landing.feature.dosbox.desc": "Tus programas se ejecutan en un entorno DOS real impulsado por js-dos, mostrando exactamente lo que una CPU real produciría.",
+  "landing.feature.dosbox.desc":
+    "Tus programas se ejecutan en un entorno DOS real impulsado por js-dos, mostrando exactamente lo que una CPU real produciría.",
   "landing.feature.exercises.title": "Ejercicios Interactivos",
-  "landing.feature.exercises.desc": "Practica con ejercicios de código, preguntas de opción múltiple y desafíos de ordenar líneas con retroalimentación instantánea.",
+  "landing.feature.exercises.desc":
+    "Practica con ejercicios de código, preguntas de opción múltiple y desafíos de ordenar líneas con retroalimentación instantánea.",
   "landing.feature.progress.title": "Seguimiento de Progreso",
-  "landing.feature.progress.desc": "Tu progreso se guarda localmente. Continúa donde lo dejaste, cuando quieras.",
+  "landing.feature.progress.desc":
+    "Tu progreso se guarda localmente. Continúa donde lo dejaste, cuando quieras.",
   "landing.demo.title": "Vívelo en Acción",
-  "landing.demo.sub": "Código assembly con resaltado de sintaxis, ejecutándose en un DOSBox real — todo en tu navegador.",
+  "landing.demo.sub":
+    "Código assembly con resaltado de sintaxis, ejecutándose en un DOSBox real — todo en tu navegador.",
   "landing.demo.badge": "Modo IDEAL — Vista previa solo lectura",
   "hero.title": "DCPU — Aprende Assembly y C",
   "hero.subtitle":
@@ -48,7 +53,7 @@ export const es: Record<string, string> = {
   "exercise.reorder.incorrect": "No está bien.",
   "exercise.reorder.tryAgain": "Intentar de nuevo",
   "exercise.code.title": "Ejercicio de Código",
-  "exercise.code.run": "Ensamblar y Ejecutar",
+  "exercise.code.run": "Correr",
   "exercise.code.running": "Ejecutando...",
   "exercise.code.reset": "Reiniciar",
   "exercise.code.greatJob": "¡Buen trabajo!",
