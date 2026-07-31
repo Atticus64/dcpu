@@ -257,6 +257,45 @@ int main() {
   }
 ]
 
+const STORAGE_KEY = "dcpu-playground"
+
+interface PlaygroundState {
+  language: PlaygroundLanguage
+  asmIndex: number
+  cIndex: number
+}
+
+function loadState(): PlaygroundState {
+  const fallback: PlaygroundState = { language: "assembly", asmIndex: 0, cIndex: 0 }
+  const stored = localStorage.getItem(STORAGE_KEY)
+  if (!stored) return fallback
+  try {
+    const parsed = JSON.parse(stored) as Partial<PlaygroundState>
+    const language: PlaygroundLanguage =
+      parsed.language === "c" || parsed.language === "assembly" ? parsed.language : "assembly"
+    const asmIndex = clampIndex(parsed.asmIndex ?? 0, ASM_EXAMPLES.length)
+    const cIndex = clampIndex(parsed.cIndex ?? 0, C_EXAMPLES.length)
+    return { language, asmIndex, cIndex }
+  } catch {
+    return fallback
+  }
+}
+
+function clampIndex(index: number, length: number): number {
+  return Math.min(Math.max(index, 0), length - 1)
+}
+
+function saveState() {
+  const state: PlaygroundState = {
+    language: language.value,
+    asmIndex: selectedAsmExample.value,
+    cIndex: selectedCExample.value,
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+}
+
+const persisted = loadState()
+
 const code = ref(ASM_EXAMPLES[0]!.code)
 const selectedExample = ref(0)
 const selectedAsmExample = ref(0)
@@ -276,6 +315,12 @@ let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 let dosProps: { stop: () => Promise<void> } | null = null;
 
 onMounted(() => {
+  language.value = persisted.language;
+  selectedAsmExample.value = persisted.asmIndex;
+  selectedCExample.value = persisted.cIndex;
+  selectedExample.value = language.value === "c" ? persisted.cIndex : persisted.asmIndex;
+  code.value = currentExamples()[selectedExample.value]!.code;
+
   registerAssemblyLanguage(monaco);
   registerMonacoThemes(monaco);
 
@@ -322,6 +367,8 @@ watch(themeStore, () => {
     monaco.editor.setTheme(themeStore.theme);
   }
 });
+
+watch([language, selectedAsmExample, selectedCExample], saveState);
 
 function base64ToUint8Array(base64: string): Uint8Array {
   const binary = atob(base64);

@@ -59,7 +59,7 @@ function renderMarkdown(md: string): string {
 
   html = html.replace(/^---$/gm, "<hr>");
 
-  let file_lines = html.split("\n");
+  const file_lines = html.split("\n");
   const result: string[] = [];
   let inBlock = false;
   const lines = file_lines.slice(4);
