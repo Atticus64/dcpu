@@ -233,6 +233,28 @@ int main() {
     return 0;
 }`,
   },
+  {
+    name: "Using struct",
+    code: `#include <stdio.h>
+
+struct User {
+    int age;
+    const char* name;
+};
+
+int main() {
+    struct User pedro;
+    pedro.name = "Pedro";
+    pedro.age = 15;
+    int future = 10;
+    int n_edad = pedro.age + future;
+    printf("%s ", pedro.name);
+    printf("tiene %d años\\n", pedro.age);
+    printf("Dentro de 10 años\\n");
+    printf("%s tendra %d \\n", pedro.name, n_edad);
+    return 0;
+}`
+  }
 ]
 
 const code = ref(ASM_EXAMPLES[0]!.code)

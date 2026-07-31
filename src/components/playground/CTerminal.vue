@@ -144,7 +144,8 @@ function sendInput() {
   if (!text || !ws || !canInput.value) return;
   sendCSessionInput(ws, text + "\n");
   if (pending.value) {
-    pending.value += text;
+    lines.value.push({ text: pending.value + text, kind: "output" });
+    pending.value = "";
   } else {
     lines.value.push({ text, kind: "input" });
   }
