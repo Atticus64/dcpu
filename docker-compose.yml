@@ -1,0 +1,15 @@
+services:
+  dcpu:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DOSBOX_PATH=/usr/bin/dosbox-staging
+      - JWASM_PATH=/app/tools/jwasm/jwasm
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

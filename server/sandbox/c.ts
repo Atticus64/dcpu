@@ -4,6 +4,34 @@ import { log } from "../lib/logger.ts";
 const TOOLS_DIR = join(import.meta.dirname!, "..", "..", "tools", "tcc", "tcc");
 const TCC_PATH = join(TOOLS_DIR, "tcc.exe");
 const SESSION_TIMEOUT_MS = 60_000;
+const COMPILER_PATH =
+  Deno.build.os === "linux"
+    ? "gcc" : TCC_PATH;
+
+function getCommand(os: string, srcFile: string, tmpDir: string, exeFile?: string) {
+  if (os === "linux") {
+    // compile only: gcc -o /dev/null (validation) or gcc -o exeFile
+    // caller compileC validates via -o /dev/null implicit? we compile to exeFile or check syntax
+    const out = exeFile ?? join(tmpDir, "a.out");
+    return new Deno.Command(COMPILER_PATH, {
+      args: ["-o", out, srcFile],
+      cwd: tmpDir,
+      stdout: "piped",
+      stderr: "piped",
+    });
+  }
+  return new Deno.Command(COMPILER_PATH, {
+    args: [
+      "-I", join(TOOLS_DIR, "include"),
+      "-L", join(TOOLS_DIR, "lib"),
+      "-run",
+      srcFile,
+    ],
+    cwd: tmpDir,
+    stdout: "piped",
+    stderr: "piped",
+  });
+}
 
 export function prepareSource(code: string): { src: string; hasMain: boolean } {
   const hasMain = code.includes("int main") || code.includes("void main");
@@ -24,18 +52,10 @@ export async function compileC(code: string) {
     const { src, hasMain } = prepareSource(code);
     await Deno.writeTextFile(srcFile, src);
 
-    const cmd = new Deno.Command(TCC_PATH, {
-      args: [
-        "-I", join(TOOLS_DIR, "include"),
-        "-L", join(TOOLS_DIR, "lib"),
-        "-run",
-        srcFile,
-      ],
-      cwd: tmpDir,
-      stdout: "piped",
-      stderr: "piped",
-    });
 
+    // compile to temp exe for validation, then remove
+    const tmpExe = join(tmpDir, "a.out");
+    const cmd = getCommand(Deno.build.os, srcFile, tmpDir, tmpExe);
     const start = Date.now();
     const proc = await cmd.output();
     const ms = Date.now() - start;
@@ -84,22 +104,12 @@ export async function compileCToExe(code: string): Promise<CSession> {
   log.debug(`compileCToExe: tmpDir created, code.length=${code.length}`);
   const tmpDir = await Deno.makeTempDir({ prefix: "dcpu-c-session-" });
   const srcFile = join(tmpDir, "input.c");
-  const exeFile = join(tmpDir, "program.exe");
+  const exeName = Deno.build.os === "linux" ? "a.out" : "program.exe";
+  const exeFile = join(tmpDir, exeName);
 
   const { src } = prepareSource(code);
   await Deno.writeTextFile(srcFile, src);
-
-  const cmd = new Deno.Command(TCC_PATH, {
-    args: [
-      "-I", join(TOOLS_DIR, "include"),
-      "-L", join(TOOLS_DIR, "lib"),
-      "-o", exeFile,
-      srcFile,
-    ],
-    cwd: tmpDir,
-    stdout: "piped",
-    stderr: "piped",
-  });
+  const cmd = getCommand(Deno.build.os, srcFile, tmpDir, exeFile);
 
   const proc = await cmd.output();
   const stdout = new TextDecoder().decode(proc.stdout);

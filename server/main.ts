@@ -1,15 +1,18 @@
 import { Application, Router } from "@oak/oak";
 import { compileRouter } from "./routes/compile.ts";
 import { cSessionRouter } from "./routes/c-session.ts";
+import { asmSessionRouter } from "./routes/asm-session.ts";
+import { isAsmHeadlessAvailable } from "./sandbox/assembly.ts";
 import { log } from "./lib/logger.ts";
 
 const router = new Router();
 
 router.use("/api/compile", compileRouter.routes(), compileRouter.allowedMethods());
 router.use("/api/compile/c", cSessionRouter.routes(), cSessionRouter.allowedMethods());
+router.use("/api/compile/asm", asmSessionRouter.routes(), asmSessionRouter.allowedMethods());
 
 router.get("/api/health", (ctx) => {
-  ctx.response.body = { status: "ok" };
+  ctx.response.body = { status: "ok", capabilities: { asmHeadless: isAsmHeadlessAvailable() } };
 });
 
 const app = new Application();

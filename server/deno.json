@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-read --allow-write --allow-run --allow-env --watch main.ts"
+    "dev": "deno run --allow-net --allow-read --allow-write --allow-run --allow-env --watch main.ts",
+    "setup:fedora": "bash ../scripts/setup-fedora.sh"
   },
   "imports": {
     "@oak/oak": "jsr:@oak/oak@^17.1.0",

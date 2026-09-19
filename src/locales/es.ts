@@ -13,6 +13,10 @@ export const es: Record<string, string> = {
   "playground.terminal.finished": "Programa terminado",
   "playground.terminal.error": "Error",
   "playground.terminal.connectionFailed": "No se pudo conectar con el servidor del compilador",
+  "floating.asmTitle": "ASM — Salida formateada",
+  "floating.cTitle": "C — Terminal",
+  "floating.docked": "Vista dock",
+  "floating.floating": "Ventana flotante",
   "landing.title": "Domina Assembly y C",
   "landing.subtitle":
     "Un curso práctico de assembly x86 (modo IDEAL de Turbo Assembler) y programación en C. Escribe código real con retroalimentación en tiempo real en tu navegador.",

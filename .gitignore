@@ -14,7 +14,12 @@ dist-ssr
 coverage
 *.local
 *.zip
-*tools/
+# tools: keep JWasm.exe (Windows) but ignore locally built Linux binary
+tools/jwasm/jwasm
+tools/jwasm/GccUnixR/
+tools/jwasm/*.o
+tools/jwasm/*.obj
+# keep tools/jwasm/JWasm.exe tracked (force-add if needed)
 
 # Editor directories and files
 .vscode/*
