@@ -4,7 +4,7 @@ export type CSessionMessage =
   | { type: "exit"; code: number }
   | { type: "error"; message: string }
 
-const API_BASE = "http://localhost:3001/api"
+const API_BASE = import.meta.env.VITE_API ?? "http://localhost:3001/api"
 
 export function startCSession(code: string): WebSocket {
   const wsUrl = API_BASE.replace(/^http/, "ws") + "/compile/c/ws"

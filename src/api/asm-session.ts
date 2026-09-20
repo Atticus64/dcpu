@@ -4,7 +4,7 @@ export type AsmSessionMessage =
   | { type: "exit"; code: number }
   | { type: "error"; message: string; fallback?: boolean };
 
-const API_BASE = "http://localhost:3001/api";
+const API_BASE = import.meta.env.VITE_API ?? "http://localhost:3001/api";
 
 export function startAsmSession(code: string): WebSocket {
   const wsUrl = API_BASE.replace(/^http/, "ws") + "/compile/asm/ws";
