@@ -26,4 +26,4 @@ export interface Drive {
 }
 export declare function sockdrive(url: string, persistedSectors: Uint8Array | null, preloadMode: "all" | "default" | "none", _onNewRange: (range: number, buffer: Uint8Array) => void): Promise<Drive>;
 export declare function traverseSockdriveChanges(encoded: Uint8Array, callback: (url: string, changes: Uint8Array) => void): boolean;
-export {};
+

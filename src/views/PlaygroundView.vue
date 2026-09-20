@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import * as monaco from "monaco-editor";
 import { registerMonacoThemes } from "@/utils/monaco-themes";
 import { registerAssemblyLanguage } from "@/utils/monaco-languages";
 import { useThemeStore } from "@/stores/theme";
 import { useLocaleStore } from "@/stores/locale";
-import { compileAndRun } from "@/api/compiler";
 import CTerminal from "@/components/playground/CTerminal.vue";
+import AsmTerminal from "@/components/playground/AsmTerminal.vue";
+import FloatingWindow from "@/components/ui/FloatingWindow.vue";
 
 type PlaygroundLanguage = "assembly" | "c";
 
@@ -311,10 +312,24 @@ interface PlaygroundState {
   language: PlaygroundLanguage
   asmIndex: number
   cIndex: number
+  dosZoom: number
+  editorBasis: number
+}
+
+function clampZoom(v: unknown): number {
+  const n = typeof v === "number" ? v : Number(v)
+  if (!Number.isFinite(n)) return 1
+  return Math.min(2, Math.max(1, Math.round(n * 4) / 4))
+}
+
+function clampBasis(v: unknown): number {
+  const n = typeof v === "number" ? v : Number(v)
+  if (!Number.isFinite(n)) return 50
+  return Math.min(70, Math.max(30, Math.round(n)))
 }
 
 function loadState(): PlaygroundState {
-  const fallback: PlaygroundState = { language: "assembly", asmIndex: 0, cIndex: 0 }
+  const fallback: PlaygroundState = { language: "assembly", asmIndex: 0, cIndex: 0, dosZoom: 1, editorBasis: 50 }
   const stored = localStorage.getItem(STORAGE_KEY)
   if (!stored) return fallback
   try {
@@ -323,10 +338,29 @@ function loadState(): PlaygroundState {
       parsed.language === "c" || parsed.language === "assembly" ? parsed.language : "assembly"
     const asmIndex = clampIndex(parsed.asmIndex ?? 0, ASM_EXAMPLES.length)
     const cIndex = clampIndex(parsed.cIndex ?? 0, C_EXAMPLES.length)
-    return { language, asmIndex, cIndex }
+    return {
+      language,
+      asmIndex,
+      cIndex,
+      dosZoom: clampZoom(parsed.dosZoom ?? 1),
+      editorBasis: clampBasis(parsed.editorBasis ?? 50),
+    }
   } catch {
     return fallback
   }
+}
+
+const FLOAT_KEY = "dcpu-floating"
+function loadFloating(): boolean {
+  try {
+    const v = localStorage.getItem(FLOAT_KEY)
+    if (v === "0") return false
+    if (v === "1") return true
+  } catch { /* ignore */ }
+  return true
+}
+function saveFloating() {
+  try { localStorage.setItem(FLOAT_KEY, preferFloating.value ? "1" : "0") } catch { /* ignore */ }
 }
 
 function clampIndex(index: number, length: number): number {
@@ -338,6 +372,8 @@ function saveState() {
     language: language.value,
     asmIndex: selectedAsmExample.value,
     cIndex: selectedCExample.value,
+    dosZoom: dosZoom.value,
+    editorBasis: editorBasis.value,
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
@@ -355,12 +391,85 @@ const showDos = ref(true);
 const themeStore = useThemeStore();
 const locale = useLocaleStore();
 
+// Zoom inline 100-200% (step 0.25) + splitter persisted
+const dosZoom = ref(1)
+const editorBasis = ref(50)
+const panelsRef = ref<HTMLDivElement | null>(null)
+const isDragging = ref(false)
+const isMobile = ref(false)
+
+const zoomPercent = computed(() => Math.round(dosZoom.value * 100))
+const canZoomOut = computed(() => dosZoom.value > 1)
+const canZoomIn = computed(() => dosZoom.value < 2)
+const dosViewportStyle = computed(() => ({
+  // Without overriding canvas !important, scale the container instead
+  transform: `scale(${dosZoom.value})`,
+  transformOrigin: "top center",
+}))
+const editorPanelStyle = computed(() =>
+  showDos.value && language.value === "assembly" && !isMobile.value ? { flex: `0 0 ${editorBasis.value}%` } : undefined,
+)
+const dosPanelStyle = computed(() =>
+  showDos.value && language.value === "assembly" && !isMobile.value ? { flex: `0 0 ${100 - editorBasis.value}%` } : undefined,
+)
+
+function zoomIn() {
+  if (dosZoom.value < 2) dosZoom.value = clampZoom(dosZoom.value + 0.25)
+}
+function zoomOut() {
+  if (dosZoom.value > 1) dosZoom.value = clampZoom(dosZoom.value - 0.25)
+}
+function resetZoom() {
+  dosZoom.value = 1
+}
+
+let mediaQuery: MediaQueryList | null = null
+let mediaHandler: ((e: MediaQueryListEvent) => void) | null = null
+
+function startDrag(e: MouseEvent | TouchEvent) {
+  if (language.value !== "assembly" || !showDos.value) return
+  const isTouch = "touches" in e
+  const startX = isTouch ? (e as TouchEvent).touches[0]!.clientX : (e as MouseEvent).clientX
+  const panelsEl = panelsRef.value
+  if (!panelsEl) return
+  const rect = panelsEl.getBoundingClientRect()
+  const startBasis = editorBasis.value
+  isDragging.value = true
+  document.body.style.userSelect = "none"
+  document.body.style.cursor = "col-resize"
+
+  function onMove(ev: MouseEvent | TouchEvent) {
+    const clientX = "touches" in ev ? (ev as TouchEvent).touches[0]!.clientX : (ev as MouseEvent).clientX
+    const deltaX = clientX - startX
+    const deltaPct = (deltaX / rect.width) * 100
+    editorBasis.value = clampBasis(startBasis + deltaPct)
+  }
+  function onUp() {
+    isDragging.value = false
+    document.body.style.userSelect = ""
+    document.body.style.cursor = ""
+    window.removeEventListener("mousemove", onMove as EventListener)
+    window.removeEventListener("mouseup", onUp)
+    window.removeEventListener("touchmove", onMove as EventListener)
+    window.removeEventListener("touchend", onUp)
+    saveState()
+  }
+  window.addEventListener("mousemove", onMove as EventListener)
+  window.addEventListener("mouseup", onUp)
+  window.addEventListener("touchmove", onMove as EventListener, { passive: false } as AddEventListenerOptions)
+  window.addEventListener("touchend", onUp)
+}
+
 const cTerminal = ref<InstanceType<typeof CTerminal> | null>(null)
+const asmTerminal = ref<InstanceType<typeof AsmTerminal> | null>(null)
+const cTerminalFloat = ref<InstanceType<typeof CTerminal> | null>(null)
+const asmTerminalFloat = ref<InstanceType<typeof AsmTerminal> | null>(null)
+const showAsmFloat = ref(false)
+const showCFloat = ref(false)
+const preferFloating = ref(true)
 
 const editorContainer = ref<HTMLDivElement | null>(null);
-const dosContainer = ref<HTMLDivElement | null>(null);
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
-let dosProps: { stop: () => Promise<void> } | null = null;
 
 onMounted(() => {
   language.value = persisted.language;
@@ -368,6 +477,13 @@ onMounted(() => {
   selectedCExample.value = persisted.cIndex;
   selectedExample.value = language.value === "c" ? persisted.cIndex : persisted.asmIndex;
   code.value = currentExamples()[selectedExample.value]!.code;
+  dosZoom.value = clampZoom(persisted.dosZoom);
+  editorBasis.value = clampBasis(persisted.editorBasis);
+  preferFloating.value = loadFloating();
+  mediaQuery = window.matchMedia("(max-width: 768px)")
+  isMobile.value = mediaQuery.matches
+  mediaHandler = (e: MediaQueryListEvent) => (isMobile.value = e.matches)
+  mediaQuery.addEventListener("change", mediaHandler)
 
   registerAssemblyLanguage(monaco);
   registerMonacoThemes(monaco);
@@ -406,8 +522,11 @@ onMounted(() => {
 
 onUnmounted(() => {
   editor?.dispose();
-  dosProps?.stop().catch(() => {});
   cTerminal.value?.stop();
+  asmTerminal.value?.stop();
+  cTerminalFloat.value?.stop();
+  asmTerminalFloat.value?.stop();
+  if (mediaQuery && mediaHandler) mediaQuery.removeEventListener("change", mediaHandler);
 });
 
 watch(themeStore, () => {
@@ -417,77 +536,43 @@ watch(themeStore, () => {
 });
 
 watch([language, selectedAsmExample, selectedCExample], saveState);
+watch([dosZoom, editorBasis], saveState);
+watch(preferFloating, saveFloating);
 
-function base64ToUint8Array(base64: string): Uint8Array {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
+function activeAsmTerminal(): InstanceType<typeof AsmTerminal> | null {
+  if (preferFloating.value) return asmTerminalFloat.value ?? asmTerminal.value;
+  return asmTerminal.value ?? asmTerminalFloat.value;
+}
+function activeCTerminal(): InstanceType<typeof CTerminal> | null {
+  if (preferFloating.value) return cTerminalFloat.value ?? cTerminal.value;
+  return cTerminal.value ?? cTerminalFloat.value;
 }
 
 async function run() {
   if (language.value === "c") {
-    cTerminal.value?.start(code.value);
+    if (!showDos.value) showDos.value = true;
+    error.value = "";
+    if (preferFloating.value) {
+      showCFloat.value = true;
+      await nextTick();
+      activeCTerminal()?.start(code.value);
+    } else {
+      cTerminal.value?.start(code.value);
+    }
     return;
   }
-  runAssembly();
-}
-
-async function runAssembly() {
-  if (!dosContainer.value) return;
-
+  // ASM: js-dos 100% cliente (compila via POST /api/compile/run -> exeBase64, ejecuta en AsmTerminal)
   if (!showDos.value) showDos.value = true;
-
-  isRunning.value = true;
   error.value = "";
-
-  try {
-    const res = await compileAndRun(code.value);
-    if (!res.success || !res.exeBase64) {
-      error.value = res.error || "Compilation failed";
-      return;
-    }
-
-    const exeBytes = base64ToUint8Array(res.exeBase64);
-
-    if (dosProps) {
-      await dosProps.stop();
-      dosProps = null;
-    }
-
-    dosContainer.value.innerHTML = "";
-
-    await import("js-dos/dist/js-dos.js");
-    const Dos = (
-      window as unknown as { Dos: (el: HTMLElement, opts: Record<string, unknown>) => { stop: () => Promise<void> } }
-    ).Dos;
-
-    dosProps = Dos(dosContainer.value, {
-      dosboxConf: `[autoexec]\n@echo off\ncls\nmount c .\nc:\nprogram.exe\n`,
-      initFs: [{ path: "program.exe", contents: exeBytes }],
-      pathPrefix: "/emulators/",
-      autoStart: true,
-      noCursor: false,
-      kiosk: true,
-      theme:
-        themeStore.theme === "one-dark" ||
-        themeStore.theme.endsWith("-dark") ||
-        themeStore.theme.endsWith("-mirage") ||
-        themeStore.theme === "dracula" ||
-        themeStore.theme === "nord"
-          ? "dark"
-          : "light",
-      backend: "dosbox",
-      backendLocked: true,
-      workerThread: true,
-    });
-  } catch (err) {
-    error.value = `Error: ${err instanceof Error ? err.message : "Unknown error"}`;
-  } finally {
-    isRunning.value = false;
+  isRunning.value = true;
+  if (preferFloating.value) {
+    showAsmFloat.value = true;
+    await nextTick();
+    activeAsmTerminal()?.start(code.value);
+  } else {
+    asmTerminal.value?.start(code.value);
   }
+  setTimeout(() => (isRunning.value = false), 800);
 }
 
 function currentExamples() {
@@ -512,11 +597,10 @@ function editorLanguage() {
 }
 
 async function stopRunning() {
-  if (dosProps) {
-    await dosProps.stop().catch(() => {});
-    dosProps = null;
-  }
   cTerminal.value?.stop();
+  asmTerminal.value?.stop();
+  cTerminalFloat.value?.stop();
+  asmTerminalFloat.value?.stop();
 }
 
 async function switchLanguage(lang: PlaygroundLanguage) {
@@ -539,10 +623,13 @@ function reset() {
 
 function toggleDos() {
   showDos.value = !showDos.value;
-  if (!showDos.value && dosProps) {
-    dosProps.stop().catch(() => {});
-    dosProps = null;
+  if (!showDos.value) {
+    asmTerminal.value?.stop();
+    asmTerminalFloat.value?.stop();
   }
+}
+function toggleFloating() {
+  preferFloating.value = !preferFloating.value;
 }
 </script>
 
@@ -572,8 +659,11 @@ function toggleDos() {
           {{ isRunning ? locale.t("exercise.code.running") : "▶ " + locale.t("exercise.code.run") }}
         </button>
         <button @click="reset" class="btn btn-reset">{{ locale.t("exercise.code.reset") }}</button>
+        <button class="btn btn-dos-toggle" :title="preferFloating ? 'Modo dock' : 'Ventana flotante'" @click="toggleFloating">
+          {{ preferFloating ? "⬗" : "🗔" }}
+        </button>
         <button
-          v-if="language === 'assembly'"
+          v-if="language === 'assembly' && !preferFloating"
           @click="toggleDos"
           class="btn btn-dos-toggle"
           :title="showDos ? 'Hide DOSBox' : 'Show DOSBox'"
@@ -583,20 +673,63 @@ function toggleDos() {
       </div>
     </div>
 
-    <div class="panels">
-      <div class="panel panel-editor">
+    <div ref="panelsRef" class="panels" :class="{ dragging: isDragging }">
+      <div class="panel panel-editor" :style="preferFloating ? undefined : editorPanelStyle">
         <div ref="editorContainer" class="monaco-editor-container" />
       </div>
-      <div class="panel panel-dos" v-show="showDos && language === 'assembly'">
-        <div ref="dosContainer" class="dos-output" />
-        <div v-if="error" class="error-panel">
-          <pre>{{ error }}</pre>
+      <template v-if="!preferFloating">
+        <div
+          v-if="showDos && language === 'assembly'"
+          class="splitter"
+          role="separator"
+          aria-orientation="vertical"
+          :aria-valuenow="editorBasis"
+          aria-valuemin="30"
+          aria-valuemax="70"
+          title="Arrastrar para redimensionar"
+          @mousedown="startDrag"
+          @touchstart.prevent="startDrag"
+        />
+        <div class="panel panel-dos" v-show="showDos && language === 'assembly'" :style="dosPanelStyle">
+          <div class="dos-viewport" :style="dosViewportStyle">
+            <AsmTerminal ref="asmTerminal" />
+          </div>
+          <div v-if="error" class="error-panel">
+            <pre>{{ error }}</pre>
+          </div>
         </div>
-      </div>
-      <div class="panel panel-terminal" v-show="language === 'c'">
-        <CTerminal ref="cTerminal" />
-      </div>
+        <div class="panel panel-terminal" v-show="language === 'c'">
+          <CTerminal ref="cTerminal" />
+        </div>
+      </template>
     </div>
+
+    <!-- Floating windows (preferFloating) -->
+    <FloatingWindow
+      v-model="showAsmFloat"
+      :title="locale.t('floating.asmTitle')"
+      :initial-x="520"
+      :initial-y="80"
+      :initial-w="560"
+      :initial-h="420"
+      :z-index="1000"
+      @update:model-value="(v) => !v && asmTerminalFloat?.stop()"
+    >
+      <AsmTerminal ref="asmTerminalFloat" />
+    </FloatingWindow>
+
+    <FloatingWindow
+      v-model="showCFloat"
+      :title="locale.t('floating.cTitle')"
+      :initial-x="480"
+      :initial-y="100"
+      :initial-w="540"
+      :initial-h="380"
+      :z-index="1001"
+      @update:model-value="(v) => !v && cTerminalFloat?.stop()"
+    >
+      <CTerminal ref="cTerminalFloat" />
+    </FloatingWindow>
   </div>
 </template>
 
@@ -726,9 +859,15 @@ function toggleDos() {
 
 .panels {
   display: flex;
-  gap: 1rem;
+  gap: 0;
   flex: 1;
   min-height: 0;
+  align-items: stretch;
+}
+
+.panels.dragging {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .panel {
@@ -754,6 +893,35 @@ function toggleDos() {
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
+}
+
+.splitter {
+  flex: 0 0 8px;
+  margin: 0 0.25rem;
+  border-radius: 4px;
+  background: transparent;
+  cursor: col-resize;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.splitter::after {
+  content: "";
+  width: 2px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--color-border);
+  transition: background 0.15s, height 0.15s;
+}
+
+.splitter:hover::after,
+.panels.dragging .splitter::after {
+  background: var(--color-theme-accent);
+  height: 60px;
 }
 
 .panel-terminal {
@@ -768,19 +936,18 @@ function toggleDos() {
   height: 100%;
 }
 
-.dos-output {
+.panel-dos :deep(.asm-terminal) {
+  height: 100%;
+}
+
+.dos-viewport {
   flex: 1;
   min-height: 300px;
   background: #000;
-  position: relative;
-}
-
-.dos-output :deep(canvas) {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain;
-  object-position: top center;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .error-panel {
@@ -814,6 +981,14 @@ function toggleDos() {
   .panel-editor,
   .panel-dos {
     min-height: 350px;
+  }
+
+  .splitter {
+    display: none;
+  }
+
+  .dos-viewport {
+    min-height: 320px;
   }
 
   .toolbar {

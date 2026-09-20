@@ -176,4 +176,4 @@ export declare class CommandInterfaceOverTransportLayer implements CommandInterf
     net(): Net | null;
     getRunningProgram(): Promise<string>;
 }
-export {};
+

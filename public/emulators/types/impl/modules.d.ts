@@ -43,4 +43,4 @@ export declare class WasmModulesImpl implements IWasmModules {
     private loadModule;
 }
 export declare function loadWasmModule(url: string, moduleName: string, onprogress: (stage: string, total: number, loaded: number) => void): Promise<WasmModule>;
-export {};
+

@@ -1,6 +1,6 @@
 import type { CompileRequest, CompileResponse, CompileRunResponse } from "@/types";
 
-const API_BASE = "http://localhost:3001/api";
+const API_BASE = import.meta.env.VITE_API ?? "http://localhost:3001/api";
 
 function parseCode(code: string): string {
   let resultado = code;

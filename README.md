@@ -11,8 +11,28 @@ An interactive platform for learning x86 assembly (Turbo Assembler IDEAL mode) a
 - **Node.js** >= 22.18 (or >= 24.12)
 - **pnpm** (install with `npm i -g pnpm`)
 - **Deno** >= 2 (download from [deno.com](https://deno.com))
-- **JWasm** — included at `tools/jwasm/JWasm.exe`
-- **TCC (Tiny C Compiler)** — included at `tools/tcc/tcc/tcc.exe`
+- **JWasm** — included at `tools/jwasm/JWasm.exe` (Windows) or built via `scripts/setup-fedora.sh` (Fedora/Linux) in the sibling `dcpu-server` repo
+- **TCC (Tiny C Compiler)** — included at `tools/tcc/tcc/tcc.exe` (Windows); on Linux `gcc` is used (sibling `dcpu-server` repo)
+
+#### Fedora Linux (x86_64)
+
+For TASM 16-bit (`ideal`, `model small`, `int 21h`) the server needs a native `jwasm` binary. On Fedora:
+
+```sh
+cd ../dcpu-server                        # backend lives in its own repo
+sudo dnf install -y make gcc git      # required for building JWasm
+bash scripts/setup-fedora.sh          # clones JWasm, runs GccUnix.mak, installs to tools/jwasm/jwasm
+# optional global install:
+# sudo cp tools/jwasm/jwasm /usr/local/bin/jwasm
+# verify:
+jwasm -h | grep -q "\-mz" && echo "jwasm ready"
+# or tools/jwasm/jwasm -h | grep -q "\-mz"
+
+# alternative: use JWASM_PATH env
+JWASM_PATH=./tools/jwasm/jwasm deno task dev
+```
+
+The backend auto-resolves `jwasm` in order: `$JWASM_PATH` → `/usr/local/bin/jwasm` → `/usr/bin/jwasm` → `tools/jwasm/jwasm` → `jwasm` in `PATH` (`dcpu-server/sandbox/assembly.ts`).
 
 ### Frontend (Vue 3 + Vite)
 
@@ -30,7 +50,7 @@ npm run test:unit        # vitest
 The compiler API compiles assembly (via JWasm) and C (via TCC). Run on port **3001**:
 
 ```sh
-cd server
+cd ../dcpu-server                     # backend lives in its own repo
 deno task dev            # http://localhost:3001
 ```
 
@@ -63,12 +83,13 @@ dcpu/
 │   ├── types/              # TypeScript interfaces
 │   ├── utils/              # Monaco themes & x86asm language
 │   └── views/              # HomeView, LessonView, BlogView, BlogPostView
-├── server/                 # Deno backend
-│   ├── routes/compile.ts   # POST /api/compile
-│   └── sandbox/            # assembly.ts, c.ts (compile + run)
-└── tools/
-    ├── jwasm/              # JWasm assembler
-    └── tcc/                # Tiny C Compiler
+└── (sibling repo) dcpu-server/          # Deno backend + tools
+    ├── main.ts                         # Oak app, /api routes
+    ├── routes/compile.ts               # POST /api/compile
+    ├── sandbox/                        # assembly.ts, c.ts (compile + run)
+    └── tools/
+        ├── jwasm/                      # JWasm assembler
+        └── tcc/                        # Tiny C Compiler
 ```
 
 ### Adding Content
@@ -97,8 +118,28 @@ dcpu/
 - **Node.js** >= 22.18 (o >= 24.12)
 - **pnpm** (instalar con `npm i -g pnpm`)
 - **Deno** >= 2 (descargar de [deno.com](https://deno.com))
-- **JWasm** — incluido en `tools/jwasm/JWasm.exe`
-- **TCC (Tiny C Compiler)** — incluido en `tools/tcc/tcc/tcc.exe`
+- **JWasm** — incluido en `tools/jwasm/JWasm.exe` (Windows) o compilado con `scripts/setup-fedora.sh` (Fedora/Linux) en el repo hermano `dcpu-server`
+- **TCC (Tiny C Compiler)** — incluido en `tools/tcc/tcc/tcc.exe` (Windows); en Linux se usa `gcc` (repo hermano `dcpu-server`)
+
+#### Fedora Linux (x86_64)
+
+Para TASM 16-bit (`ideal`, `model small`, `int 21h`) el server necesita `jwasm` nativo. En Fedora:
+
+```sh
+cd ../dcpu-server                        # el backend vive en su propio repo
+sudo dnf install -y make gcc git      # requerido para compilar JWasm
+bash scripts/setup-fedora.sh          # clona JWasm, ejecuta GccUnix.mak, instala en tools/jwasm/jwasm
+# instalación global opcional:
+# sudo cp tools/jwasm/jwasm /usr/local/bin/jwasm
+# verificar:
+jwasm -h | grep -q "\-mz" && echo "jwasm listo"
+# o tools/jwasm/jwasm -h | grep -q "\-mz"
+
+# alternativa con variable de entorno:
+JWASM_PATH=./tools/jwasm/jwasm deno task dev
+```
+
+El backend resuelve `jwasm` en orden: `$JWASM_PATH` → `/usr/local/bin/jwasm` → `/usr/bin/jwasm` → `tools/jwasm/jwasm` → `jwasm` en `PATH` (`dcpu-server/sandbox/assembly.ts`).
 
 ### Frontend (Vue 3 + Vite)
 
@@ -116,7 +157,7 @@ npm run test:unit        # vitest
 La API del compilador compila assembly (con JWasm) y C (con TCC). Ejecutar en el puerto **3001**:
 
 ```sh
-cd server
+cd ../dcpu-server                     # el backend vive en su propio repo
 deno task dev            # http://localhost:3001
 ```
 
@@ -149,12 +190,13 @@ dcpu/
 │   ├── types/              # Interfaces TypeScript
 │   ├── utils/              # Temas Monaco y lenguaje x86asm
 │   └── views/              # HomeView, LessonView, BlogView, BlogPostView
-├── server/                 # Backend Deno
-│   ├── routes/compile.ts   # POST /api/compile
-│   └── sandbox/            # assembly.ts, c.ts (compilar + ejecutar)
-└── tools/
-    ├── jwasm/              # Ensamblador JWasm
-    └── tcc/                # Tiny C Compiler
+└── (repo hermano) dcpu-server/         # Backend Deno + tools
+    ├── main.ts                         # App Oak, rutas /api
+    ├── routes/compile.ts               # POST /api/compile
+    ├── sandbox/                        # assembly.ts, c.ts (compilar + ejecutar)
+    └── tools/
+        ├── jwasm/                      # Ensamblador JWasm
+        └── tcc/                        # Tiny C Compiler
 ```
 
 ### Añadir Contenido
